@@ -42,7 +42,7 @@ string InverseBWT(string BWTString, int endIndex)
 }
 
 string? inputString = Console.ReadLine();
-var result = BWT(inputString + "$");
+var result = BWT(inputString.ToUpper() + "$");
 Console.Write($"{result.Item1} ");
 Console.WriteLine(result.Item2);
 Console.WriteLine(InverseBWT(result.Item1, result.Item2));

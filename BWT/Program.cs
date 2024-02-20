@@ -16,8 +16,33 @@
     return Tuple.Create(new string(resultString), endIndex);
 }
 
+string InverseBWT(string BWTString, int endIndex)
+{   
+    char[] characters = BWTString.Distinct().ToArray();
+    int[] characterIndex = new int[characters.Length];
+    int[] sortedIndexes = new int[BWTString.Length];
+    char[] originalString = new char[BWTString.Length];
+    Array.Sort(characters);
+    for (int i = 1; i<characters.Length; i++)
+    {
+        characterIndex[i] = BWTString.Where(c => c == characters[i-1]).Count() + characterIndex[i-1];
+    }
+    for (int i = 0; i<BWTString.Length; i++)
+    {
+        sortedIndexes[i] = characterIndex[Array.IndexOf(characters, BWTString[i])];
+        characterIndex[Array.IndexOf(characters, BWTString[i])]++;
+    }
+    originalString[^1] = BWTString[endIndex];
+    for (int i = 1; i<BWTString.Length; i++)
+    {
+        originalString[^(i+1)] = BWTString[sortedIndexes[endIndex]];
+        endIndex = sortedIndexes[endIndex];
+    }
+    return new string(originalString);
+}
 
-string? str = Console.ReadLine();
-var resultString = BWT(str + "$");
-Console.WriteLine(resultString.Item1);
-Console.WriteLine(resultString.Item2);
+string? inputString = Console.ReadLine();
+var result = BWT(inputString + "$");
+Console.Write($"{result.Item1} ");
+Console.WriteLine(result.Item2);
+Console.WriteLine(InverseBWT(result.Item1, result.Item2));

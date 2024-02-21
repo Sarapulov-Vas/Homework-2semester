@@ -1,7 +1,7 @@
 ﻿Tuple<string, int> BWT(string inputString){
     string[] suffixArray = new string[inputString.Length];
     var resultString= new char[inputString.Length];
-    int endIndex;
+    int endIndex = 0;
     suffixArray[0] = inputString;
     for (int i = 1; i<inputString.Length; i++)
     {   
@@ -11,8 +11,11 @@
     for (int i = 0; i<inputString.Length; i++)
     {
         resultString[i] = suffixArray[i][^1];
+        if (suffixArray[i] == inputString)
+        {
+            endIndex = i;
+        }
     }
-    endIndex = Array.IndexOf(resultString, inputString[^1]);
     return Tuple.Create(new string(resultString), endIndex);
 }
 
@@ -25,8 +28,9 @@ string InverseBWT(string BWTString, int endIndex)
     Array.Sort(characters);
     for (int i = 1; i<characters.Length; i++)
     {
-        characterIndex[i] = BWTString.Where(c => c == characters[i-1]).Count() + characterIndex[i-1];
+        characterIndex[i] = BWTString.Where(sign => sign == characters[i-1]).Count() + characterIndex[i-1];
     }
+
     for (int i = 0; i<BWTString.Length; i++)
     {
         sortedIndexes[i] = characterIndex[Array.IndexOf(characters, BWTString[i])];
@@ -34,15 +38,20 @@ string InverseBWT(string BWTString, int endIndex)
     }
     originalString[^1] = BWTString[endIndex];
     for (int i = 1; i<BWTString.Length; i++)
-    {
-        originalString[^(i+1)] = BWTString[sortedIndexes[endIndex]];
+    {   
         endIndex = sortedIndexes[endIndex];
+        originalString[^(i+1)] = BWTString[endIndex];
     }
     return new string(originalString);
 }
 
 string? inputString = Console.ReadLine();
-var result = BWT(inputString.ToUpper() + "$");
-Console.Write($"{result.Item1} ");
-Console.WriteLine(result.Item2);
-Console.WriteLine(InverseBWT(result.Item1, result.Item2));
+if (inputString != null)
+{
+    var result = BWT(inputString);
+    Console.Write($"{result.Item1} ");
+    Console.WriteLine(result.Item2);
+    Console.WriteLine(InverseBWT(result.Item1, result.Item2));
+}else{
+    Console.WriteLine();
+}

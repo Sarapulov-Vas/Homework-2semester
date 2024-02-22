@@ -1,36 +1,42 @@
-﻿Tuple<string, int> BWT(string inputString){
-    string[] suffixArray = new string[inputString.Length];
+﻿(string, int) BWT(string inputString){
+    int[] suffixArray = new int[inputString.Length];
     var resultString= new char[inputString.Length];
-    int endIndex = 0;
-    suffixArray[0] = inputString;
-    for (int i = 1; i<inputString.Length; i++)
-    {   
-        suffixArray[i] = suffixArray[i-1].Remove(0, 1) + suffixArray[i-1][0];
-    }
-    Array.Sort(suffixArray);
+    int endIndex;
     for (int i = 0; i<inputString.Length; i++)
-    {
-        resultString[i] = suffixArray[i][^1];
-        if (suffixArray[i] == inputString)
+    {   
+        suffixArray[i] = i;
+    }
+    Array.Sort(suffixArray, (x, y) => string.CompareOrdinal(inputString[x..] + inputString[..x], inputString[y..] + inputString[..y]));
+    endIndex = Array.IndexOf(suffixArray, 0);
+    for (int i = 0; i<inputString.Length; i++)
+    {   
+        if (suffixArray[i] == 0)
         {
-            endIndex = i;
+            resultString[i] = inputString[^1];
+        }
+        else
+        {
+            resultString[i] = inputString[suffixArray[i] - 1];
         }
     }
-    return Tuple.Create(new string(resultString), endIndex);
+    return (new string(resultString), endIndex);
 }
 
 string InverseBWT(string BWTString, int endIndex)
 {   
+    if (BWTString.Length == 0)
+    {
+        return "";
+    }
     char[] characters = BWTString.Distinct().ToArray();
     int[] characterIndex = new int[characters.Length];
     int[] sortedIndexes = new int[BWTString.Length];
     char[] originalString = new char[BWTString.Length];
     Array.Sort(characters);
     for (int i = 1; i<characters.Length; i++)
-    {
+    {   
         characterIndex[i] = BWTString.Where(sign => sign == characters[i-1]).Count() + characterIndex[i-1];
     }
-
     for (int i = 0; i<BWTString.Length; i++)
     {
         sortedIndexes[i] = characterIndex[Array.IndexOf(characters, BWTString[i])];
@@ -49,9 +55,9 @@ string? inputString = Console.ReadLine();
 if (inputString != null)
 {
     var result = BWT(inputString);
-    Console.Write($"{result.Item1} ");
-    Console.WriteLine(result.Item2);
+    Console.Write($"\n{result.Item1} ");
+    Console.WriteLine($"{result.Item2}\n");
     Console.WriteLine(InverseBWT(result.Item1, result.Item2));
 }else{
-    Console.WriteLine();
+    Console.WriteLine("Wrong input!");
 }

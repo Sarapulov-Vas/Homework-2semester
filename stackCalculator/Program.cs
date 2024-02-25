@@ -1,4 +1,6 @@
-﻿interface IStack
+﻿using System.ComponentModel;
+
+interface IStack
 {   
     void Push(double value);
     double Pop();
@@ -7,13 +9,13 @@
 class ListStack : IStack
 {
     public int Length { get; set; }
-    public List<double> stack = new List<double>();
-    void IStack.Push(double value)
+    private List<double> stack = new List<double>();
+    public void Push(double value)
     {   
         stack.Add(value);
         Length = stack.Count;
     }
-    double IStack.Pop()
+    public double Pop()
     {
         double value = stack[^1];
         stack.RemoveAt(stack.Count - 1);
@@ -21,18 +23,17 @@ class ListStack : IStack
         return value;
     }
 }
-
 class ArrayStack : IStack
 {
     public int Length { get; set; }
-    public double[] stack = Array.Empty<double>() ;
-    void IStack.Push(double value)
+    private double[] stack = Array.Empty<double>() ;
+    public void Push(double value)
     {   
         Length = stack.Length + 1;
         Array.Resize(ref stack, Length);
         stack[^1] = value;
     }
-    double IStack.Pop()
+    public double Pop()
     {
         double value = stack[^1];
         Array.Resize(ref stack, Length - 1);
@@ -102,10 +103,51 @@ class StackCalculator
         return stack.Pop();
     }
 }
+class Test
+{
+    private static double epsilon = 0.000001;
+    private static List<bool> TestsList = new List<bool>();
+    public void AddTest(string inputExpression, double expectedResult)
+    {   
+        StackCalculator result = new StackCalculator();
+        if (Math.Abs(result.Calculate(inputExpression) - expectedResult) < epsilon)
+        {
+            TestsList.Add(true);
+        }
+        else
+        {
+            TestsList.Add(false);
+        }
+    }
+    public static bool StartTest()
+    {
+        for (int i = 0; i < TestsList.Count; ++i)
+        {
+            if (TestsList[i] == true)
+            {
+                Console.WriteLine($"Test {i + 1} complit.");
+            }
+            else
+            {
+                Console.WriteLine($"Test {i + 1} failed!");
+                return false;
+            }
+        }
+        return true;
+    }
+}
 class MainClass
 {
     static void Main()
     {   
+        Test tests = new Test();
+        tests.AddTest("1 2 3 + *", 5);
+        tests.AddTest("1 2 3 * +", 7);
+        tests.AddTest("2 2 5 / 1 + 7 * / -10 -", -22.25);
+        if (!Test.StartTest())
+        {
+            return;
+        }
         Console.WriteLine("Input expression ");
         string? inputString = Console.ReadLine();
         if (inputString != null)

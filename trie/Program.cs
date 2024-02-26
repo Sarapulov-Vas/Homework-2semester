@@ -1,4 +1,6 @@
-﻿class TrieNode
+﻿using System.Drawing;
+
+class TrieNode
 {
     public bool IsTerminal;
     public Dictionary<char, TrieNode> NextNode;
@@ -10,8 +12,8 @@
 }
 class Trie
 {
-    private  TrieNode root;
-    public int Size;
+    private TrieNode root;
+    public static int Size;
     public Trie()
     {
         Size = 0;
@@ -56,6 +58,49 @@ class Trie
             return false;
         }
     }
+    public bool Remove(string element)
+    {
+        TrieNode currentNode = root;
+        if (!Contains(element))
+        {
+            return false;
+        }
+        RemoveElement(element, root);
+        return true;
+    }
+    private static bool RemoveElement(string element, TrieNode currentNode)
+    {
+        if (element.Length > 0)
+        {
+            if (RemoveElement(element[1..], currentNode.NextNode[element[0]]))
+            {
+                currentNode.NextNode.Remove(element[0]);
+                if (currentNode.NextNode.Count == 0)
+                {
+                    --Size;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+        else
+        {
+            currentNode.IsTerminal = false;
+            if (currentNode.NextNode.Count == 0)
+            {
+                --Size;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }
 class MainClass
 {
@@ -65,6 +110,15 @@ class MainClass
         Console.WriteLine(trie.Add("март"));
         Console.WriteLine(trie.Add("маcло"));
         Console.WriteLine(trie.Add("маcлонасос"));
+
+        Console.WriteLine(trie.Contains("март"));
+        Console.WriteLine(trie.Contains("маcло"));
+        Console.WriteLine(trie.Contains("мар"));
+        Console.WriteLine(trie.Contains("масса"));
+
+        Console.WriteLine(trie.Remove("маcло"));
+        Console.WriteLine();
+
         Console.WriteLine(trie.Contains("март"));
         Console.WriteLine(trie.Contains("маcло"));
         Console.WriteLine(trie.Contains("мар"));

@@ -32,6 +32,7 @@ class Trie
             ++currentNode.WordCount;
             currentNode = currentNode.NextNode[element[i]];
         }
+        ++currentNode.WordCount;
         if (currentNode.IsTerminal == false)
         {
             currentNode.IsTerminal = true;
@@ -50,14 +51,7 @@ class Trie
             }
             currentNode = currentNode.NextNode[symbol];
         }
-        if (currentNode.IsTerminal)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return currentNode.IsTerminal;
     }
     public bool Remove(string element)
     {
@@ -81,10 +75,6 @@ class Trie
                     --Size;
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
             }
             return false;
         }
@@ -97,10 +87,8 @@ class Trie
                 --Size;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
+
         }
     }
     public int HowManyStartsWithPrefix(String prefix)
@@ -128,9 +116,11 @@ class MainClass
         Trie trie = new Trie();
         Console.WriteLine(trie.Add("март"));
         Console.WriteLine(trie.Add("масло"));
+        Console.WriteLine(trie.Add("мак"));
+        
         Console.WriteLine(trie.Add("маслонасос"));
 
         Console.WriteLine(trie.Remove("масло"));
-        Console.WriteLine(trie.HowManyStartsWithPrefix("ма"));
+        Console.WriteLine(trie.HowManyStartsWithPrefix("мак"));
     }
 }

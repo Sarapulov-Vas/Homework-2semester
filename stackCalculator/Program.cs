@@ -46,7 +46,7 @@ class StackCalculator
         IStack stack = new ListStack();
         string[] arrayExpression = Expression.Split(' ');
         double firstNumbre, secondNumber;
-        double epsilon = 0.00001;
+        double epsilon = 1e-10;
         foreach (var element in arrayExpression)
         {
             if (element != "+" && element != "*" && element != "/" && element != "-")

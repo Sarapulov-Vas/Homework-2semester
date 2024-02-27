@@ -1,12 +1,12 @@
-﻿using System.Drawing;
-
-class TrieNode
+﻿class TrieNode
 {
     public bool IsTerminal;
+    public int WordCount;
     public Dictionary<char, TrieNode> NextNode;
     public TrieNode()
     {   
         IsTerminal = false;
+        WordCount = 0;
         NextNode = new Dictionary<char, TrieNode>();
     }
 }
@@ -29,6 +29,7 @@ class Trie
                 currentNode.NextNode.Add(element[i], new TrieNode());
                 ++Size;
             }
+            ++currentNode.WordCount;
             currentNode = currentNode.NextNode[element[i]];
         }
         if (currentNode.IsTerminal == false)
@@ -60,7 +61,6 @@ class Trie
     }
     public bool Remove(string element)
     {
-        TrieNode currentNode = root;
         if (!Contains(element))
         {
             return false;
@@ -72,6 +72,7 @@ class Trie
     {
         if (element.Length > 0)
         {
+            --currentNode.WordCount;
             if (RemoveElement(element[1..], currentNode.NextNode[element[0]]))
             {
                 currentNode.NextNode.Remove(element[0]);
@@ -90,6 +91,7 @@ class Trie
         else
         {
             currentNode.IsTerminal = false;
+            --currentNode.WordCount;
             if (currentNode.NextNode.Count == 0)
             {
                 --Size;
@@ -101,6 +103,23 @@ class Trie
             }
         }
     }
+    public int HowManyStartsWithPrefix(String prefix)
+    {
+        TrieNode currentNode = root;
+        foreach (var symbol in prefix)
+        {
+            if (currentNode.NextNode.ContainsKey(symbol))
+            {
+                currentNode = currentNode.NextNode[symbol];   
+            }
+            else
+            {
+                Console.WriteLine("Prefix not found!");
+                return 0;
+            }
+        }
+        return currentNode.WordCount;
+    }
 }
 class MainClass
 {
@@ -108,20 +127,10 @@ class MainClass
     {
         Trie trie = new Trie();
         Console.WriteLine(trie.Add("март"));
-        Console.WriteLine(trie.Add("маcло"));
-        Console.WriteLine(trie.Add("маcлонасос"));
+        Console.WriteLine(trie.Add("масло"));
+        Console.WriteLine(trie.Add("маслонасос"));
 
-        Console.WriteLine(trie.Contains("март"));
-        Console.WriteLine(trie.Contains("маcло"));
-        Console.WriteLine(trie.Contains("мар"));
-        Console.WriteLine(trie.Contains("масса"));
-
-        Console.WriteLine(trie.Remove("маcло"));
-        Console.WriteLine();
-
-        Console.WriteLine(trie.Contains("март"));
-        Console.WriteLine(trie.Contains("маcло"));
-        Console.WriteLine(trie.Contains("мар"));
-        Console.WriteLine(trie.Contains("масса"));
+        Console.WriteLine(trie.Remove("масло"));
+        Console.WriteLine(trie.HowManyStartsWithPrefix("ма"));
     }
 }

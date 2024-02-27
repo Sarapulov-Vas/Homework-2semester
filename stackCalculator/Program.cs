@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-interface IStack
+﻿interface IStack
 {   
     void Push(double value);
     double Pop();

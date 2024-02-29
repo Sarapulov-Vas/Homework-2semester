@@ -1,5 +1,27 @@
 ﻿/// <summary>
-/// BWT direct conversion function/
+/// Comparator for sorting suffixes.
+/// </summary>
+/// <param name="str">Input string.</param>
+/// <param name="firstIndex">Index of first compare element.</param>
+/// <param name="secondIndex">Index of second compaere element.</param>
+/// <returns>A comparison of two suffixes.</returns>
+int Compare(string str, int firstIndex, int secondIndex)
+{
+    for (int i = 0; i < str.Length; ++i)
+    {
+        if (!Equals(str[firstIndex], str[secondIndex])){
+            return str[firstIndex].CompareTo(str[secondIndex]);
+        }
+
+        firstIndex = firstIndex == str.Length - 1 ? firstIndex = 0 : ++firstIndex;
+        secondIndex = secondIndex == str.Length - 1 ? secondIndex = 0 : ++secondIndex;
+    }
+
+    return 0;
+}
+
+/// <summary>
+/// BWT direct conversion function.
 /// </summary>
 /// <param name="inputString">Converted string.</param>
 /// <returns>The converted string and the position of the end of the string.</returns>
@@ -7,16 +29,14 @@
 {
     int[] suffixArray = new int[inputString.Length];
     var resultString = new char[inputString.Length];
-    int endIndex;
-    for (int i = 0; i < inputString.Length; i++)
+    for (int i = 0; i < inputString.Length; ++i)
     {
         suffixArray[i] = i;
     }
 
-    Array.Sort(suffixArray, (x, y) => string.CompareOrdinal(
-        inputString[x..] + inputString[..x], inputString[y..] + inputString[..y]));
-    endIndex = Array.IndexOf(suffixArray, 0);
-    for (int i = 0; i < inputString.Length; i++)
+    Array.Sort(suffixArray, (x, y) => Compare(inputString, x, y));
+    int endIndex = Array.IndexOf(suffixArray, 0);
+    for (int i = 0; i < inputString.Length; ++i)
     {
         if (suffixArray[i] == 0)
         {
@@ -49,19 +69,19 @@ string InverseBWT(string stringBWT, int endIndex)
     int[] sortedIndexes = new int[stringBWT.Length];
     char[] originalString = new char[stringBWT.Length];
     Array.Sort(characters);
-    for (int i = 1; i < characters.Length; i++)
+    for (int i = 1; i < characters.Length; ++i)
     {
         characterIndex[i] = stringBWT.Where(sign => sign == characters[i - 1]).Count() + characterIndex[i - 1];
     }
 
-    for (int i = 0; i < stringBWT.Length; i++)
+    for (int i = 0; i < stringBWT.Length; ++i)
     {
         sortedIndexes[i] = characterIndex[Array.IndexOf(characters, stringBWT[i])];
         characterIndex[Array.IndexOf(characters, stringBWT[i])]++;
     }
 
     originalString[^1] = stringBWT[endIndex];
-    for (int i = 1; i < stringBWT.Length; i++)
+    for (int i = 1; i < stringBWT.Length;++i)
     {
         endIndex = sortedIndexes[endIndex];
         originalString[^(i + 1)] = stringBWT[endIndex];

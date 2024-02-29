@@ -27,7 +27,7 @@ int Compare(string str, int firstIndex, int secondIndex)
 /// <returns>The converted string and the position of the end of the string.</returns>
 (string, int) BWT(string inputString)
 {
-    int[] suffixArray = new int[inputString.Length];
+    var suffixArray = new int[inputString.Length];
     var resultString = new char[inputString.Length];
     for (int i = 0; i < inputString.Length; ++i)
     {
@@ -65,9 +65,9 @@ string InverseBWT(string stringBWT, int endIndex)
     }
 
     char[] characters = stringBWT.Distinct().ToArray();
-    int[] characterIndex = new int[characters.Length];
-    int[] sortedIndexes = new int[stringBWT.Length];
-    char[] originalString = new char[stringBWT.Length];
+    var characterIndex = new int[characters.Length];
+    var sortedIndexes = new int[stringBWT.Length];
+    var originalString = new char[stringBWT.Length];
     Array.Sort(characters);
     for (int i = 1; i < characters.Length; ++i)
     {

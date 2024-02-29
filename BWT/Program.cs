@@ -81,7 +81,7 @@ string InverseBWT(string stringBWT, int endIndex)
     }
 
     originalString[^1] = stringBWT[endIndex];
-    for (int i = 1; i < stringBWT.Length;++i)
+    for (int i = 1; i < stringBWT.Length; ++i)
     {
         endIndex = sortedIndexes[endIndex];
         originalString[^(i + 1)] = stringBWT[endIndex];
@@ -135,7 +135,8 @@ bool StartTest()
 
 if (StartTest() == false)
 {
-    Environment.Exit(-1);
+    Console.WriteLine("Test failed");
+    return;
 }
 
 Console.Write("Enter the string: ");

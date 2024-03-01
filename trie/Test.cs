@@ -6,11 +6,14 @@ internal class Test
     /// <summary>
     /// Test run method.
     /// </summary>
-    public static void StartTest()
+    /// <returns>Test status.</returns>
+    public static bool StartTest()
     {
+        bool result = true;
         if (!TestAdd(["ab", "abcd", "df", "", "ab"], [true, true, true, true, false], 6))
         {
             Console.WriteLine("Addition test fails");
+            result = false;
         }
         else
         {
@@ -20,6 +23,7 @@ internal class Test
         if (!TestContains(["ab", "abcd", "df", "", "abef"], ["df", "abc", "", "ab", "abe", "dfe"], [true, false, true, true, false, false]))
         {
             Console.WriteLine("Contains test fails");
+            result = false;
         }
         else
         {
@@ -29,6 +33,7 @@ internal class Test
         if (!TestRemove(["ab", "abcd", "df", "", "abef", "abcf", "abc"], ["ab", "", "abc"], [false, true, true, false, true, true, false], 9))
         {
             Console.WriteLine("Remove test fails");
+            result = false;
         }
         else
         {
@@ -38,11 +43,14 @@ internal class Test
         if (!TestHowManyStartsWithPrefix(["ab", "abcd", "df", "dfabc", "acd", "abcf", "abc"], ["ab", "dfa", ""], [4, 1, 7]))
         {
             Console.WriteLine("HowManyStartsWithPrefix test fails");
+            result = false;
         }
         else
         {
             Console.WriteLine("HowManyStartsWithPrefix test passed");
         }
+
+        return result;
     }
 
     /// <summary>

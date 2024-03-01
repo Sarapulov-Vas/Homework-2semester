@@ -1,8 +1,11 @@
-﻿class Program
+﻿/// <summary>
+/// Main class.
+/// </summary>
+internal class Program
 {
-    static void Main()
+    private static void Main()
     {
-        Trie trie = new Trie();
+        var trie = new Trie();
         Test.StartTest();
         trie.Add("abc");
         Console.WriteLine(trie.Size);

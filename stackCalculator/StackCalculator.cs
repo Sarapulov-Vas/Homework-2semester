@@ -4,13 +4,26 @@
 internal class StackCalculator
 {
     /// <summary>
+    /// Stack for storing numbers.
+    /// </summary>
+    private readonly IStack stack;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StackCalculator"/> class.
+    /// </summary>
+    /// <param name="stack">The type of stack.</param>
+    public StackCalculator(IStack stack)
+    {
+        this.stack = stack;
+    }
+
+    /// <summary>
     /// Method implementing stack calculator.
     /// </summary>
     /// <param name="expression">An expression in reverse Polish notation.</param>
     /// <returns>The result of calculating the expression.</returns>
     public double Calculate(string expression)
     {
-        IStack stack = new ListStack();
         string[] arrayExpression = expression.Split(' ');
         double firstNumbre, secondNumber;
         double epsilon = 1e-10;
@@ -25,22 +38,22 @@ internal class StackCalculator
                     return 0;
                 }
 
-                stack.Push(number);
+                this.stack.Push(number);
             }
-            else if (stack.Length >= 2)
+            else if (this.stack.Length >= 2)
             {
-                firstNumbre = stack.Pop();
-                secondNumber = stack.Pop();
+                firstNumbre = this.stack.Pop();
+                secondNumber = this.stack.Pop();
                 switch (element)
                 {
                     case "+":
-                        stack.Push(firstNumbre + secondNumber);
+                        this.stack.Push(firstNumbre + secondNumber);
                         break;
                     case "-":
-                        stack.Push(firstNumbre - secondNumber);
+                        this.stack.Push(firstNumbre - secondNumber);
                         break;
                     case "*":
-                        stack.Push(firstNumbre * secondNumber);
+                        this.stack.Push(firstNumbre * secondNumber);
                         break;
                     case "/":
                         if (Math.Abs(secondNumber) <= epsilon)
@@ -49,7 +62,7 @@ internal class StackCalculator
                             return 0;
                         }
 
-                        stack.Push(firstNumbre / secondNumber);
+                        this.stack.Push(firstNumbre / secondNumber);
                         break;
                     default:
                         Console.WriteLine("Wrong input!");
@@ -63,12 +76,12 @@ internal class StackCalculator
             }
         }
 
-        if (stack.Length != 1)
+        if (this.stack.Length != 1)
         {
             Console.WriteLine("Too much argument!");
             return 0;
         }
 
-        return stack.Pop();
+        return this.stack.Pop();
     }
 }

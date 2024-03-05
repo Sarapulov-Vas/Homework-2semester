@@ -1,7 +1,7 @@
 /// <summary>
 /// Stack interface.
 /// </summary>
-internal interface IStack
+public interface IStack
 {
     /// <summary>
     /// Gets stack length field.

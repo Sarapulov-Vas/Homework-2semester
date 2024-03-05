@@ -1,7 +1,7 @@
 /// <summary>
 /// A stack class implemented through an array.
 /// </summary>
-internal class ArrayStack : IStack
+public class ArrayStack : IStack
 {
         /// <summary>
     /// Current size of stack.

@@ -5,7 +5,6 @@ internal class Program
 {
     private static void Main()
     {
-
         Console.WriteLine("Input expression ");
         string? inputString = Console.ReadLine();
         if (inputString != null)

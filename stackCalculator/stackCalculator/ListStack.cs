@@ -1,7 +1,7 @@
 /// <summary>
 /// A stack class implemented through a list.
 /// </summary>
-internal class ListStack : IStack
+public class ListStack : IStack
 {
     /// <summary>
     /// A list for the implementation of the stack.

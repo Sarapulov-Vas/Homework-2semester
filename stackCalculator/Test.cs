@@ -20,7 +20,7 @@ internal class Test
     /// <param name="expectedResult">Expected result of the calculation.</param>
     public static void AddTest(string inputExpression, double expectedResult)
     {
-        StackCalculator result = new StackCalculator();
+        StackCalculator result = new StackCalculator(new ListStack());
         if (Math.Abs(result.Calculate(inputExpression) - expectedResult) < epsilon)
         {
             TestsList.Add(true);

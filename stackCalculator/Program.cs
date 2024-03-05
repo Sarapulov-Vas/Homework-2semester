@@ -18,7 +18,7 @@ internal class Program
         string? inputString = Console.ReadLine();
         if (inputString != null)
         {
-            StackCalculator result = new StackCalculator(new ListStack());
+            StackCalculator result = new StackCalculator(new ArrayStack());
             Console.WriteLine(result.Calculate(inputString));
         }
     }

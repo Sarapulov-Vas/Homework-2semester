@@ -3,10 +3,15 @@
 /// </summary>
 internal class ArrayStack : IStack
 {
+        /// <summary>
+    /// Current size of stack.
+    /// </summary>
+    private static int size = 10;
+
     /// <summary>
     /// Array implementing the stack.
     /// </summary>
-    private double[] stack = Array.Empty<double>();
+    private double[] stack = new double[size];
 
     /// <summary>
     /// Stack length field.
@@ -27,9 +32,13 @@ internal class ArrayStack : IStack
     /// <param name="value">Adding a value to the stack.</param>
     public void Push(double value)
     {
-        this.length = this.stack.Length + 1;
-        Array.Resize(ref this.stack, this.Length);
-        this.stack[^1] = value;
+        if (this.length + 1 == size)
+        {
+            this.Resize();
+        }
+
+        this.stack[this.length] = value;
+        this.length++;
     }
 
     /// <summary>
@@ -38,9 +47,17 @@ internal class ArrayStack : IStack
     /// <returns>Removed element from the stack.</returns>
     public double Pop()
     {
-        double value = this.stack[^1];
-        Array.Resize(ref this.stack, this.Length - 1);
-        this.length = this.stack.Length;
+        this.length--;
+        double value = this.stack[this.length];
         return value;
+    }
+
+    /// <summary>
+    /// A method for increasing the size of an array.
+    /// </summary>
+    private void Resize()
+    {
+        size += 10;
+        Array.Resize(ref this.stack, size);
     }
 }

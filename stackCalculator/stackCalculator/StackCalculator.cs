@@ -34,6 +34,11 @@ public class StackCalculator
                 int number;
                 if (!int.TryParse(element, out number))
                 {
+                    while (this.stack.Length != 0)
+                    {
+                        this.stack.Pop();
+                    }
+
                     throw new ArgumentException("Wrong input!");
                 }
 
@@ -57,23 +62,43 @@ public class StackCalculator
                     case "/":
                         if (Math.Abs(secondNumber) <= epsilon)
                         {
-                            throw new DivideByZeroException("Division by zero!");
+                        while (this.stack.Length != 0)
+                        {
+                            this.stack.Pop();
+                        }
+
+                        throw new DivideByZeroException("Division by zero!");
                         }
 
                         this.stack.Push(firstNumbre / secondNumber);
                         break;
                     default:
+                        while (this.stack.Length != 0)
+                        {
+                            this.stack.Pop();
+                        }
+
                         throw new ArgumentException("Wrong input!");
                 }
             }
             else
             {
+                while (this.stack.Length != 0)
+                {
+                    this.stack.Pop();
+                }
+
                 throw new Exception("Too much operations!");
             }
         }
 
         if (this.stack.Length != 1)
         {
+            while (this.stack.Length != 0)
+            {
+                this.stack.Pop();
+            }
+
             throw new Exception("Too much arguments!");
         }
 

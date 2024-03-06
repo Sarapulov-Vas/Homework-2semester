@@ -76,7 +76,7 @@ public class Tests
         Assert.That(ArrayStackCalculator.Calculate("-1 0 +"), Is.EqualTo(-1));
     }
     [Test]
-    public void TestDivision ()
+    public void TestSubtraction ()
     {
         Assert.That(ListStackCalculator.Calculate("15 19 -"), Is.EqualTo(4));
         Assert.That(ArrayStackCalculator.Calculate("15 19 -"), Is.EqualTo(4));
@@ -111,6 +111,22 @@ public class Tests
 
         Assert.That(ListStackCalculator.Calculate("0 0 *"), Is.EqualTo(0));
         Assert.That(ArrayStackCalculator.Calculate("0 0 *"), Is.EqualTo(0));
+
+        Assert.That(ListStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
+        Assert.That(ArrayStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void TestDivision ()
+    {
+        Assert.That(ListStackCalculator.Calculate("5 15 /"), Is.EqualTo(3));
+        Assert.That(ArrayStackCalculator.Calculate("5 15 /"), Is.EqualTo(3));
+
+        Assert.That(ListStackCalculator.Calculate("111111 -111111 /"), Is.EqualTo(-1));
+        Assert.That(ArrayStackCalculator.Calculate("111111 -111111 /"), Is.EqualTo(-1));
+
+        Assert.That(ListStackCalculator.Calculate("-111111 -111111 /"), Is.EqualTo(1));
+        Assert.That(ArrayStackCalculator.Calculate("-111111 -111111 /"), Is.EqualTo(1));
 
         Assert.That(ListStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
         Assert.That(ArrayStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));

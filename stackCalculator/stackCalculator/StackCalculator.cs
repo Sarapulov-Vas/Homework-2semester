@@ -74,7 +74,7 @@ public class StackCalculator
 
         if (this.stack.Length != 1)
         {
-            throw new Exception("Too much argument!");
+            throw new Exception("Too much arguments!");
         }
 
         return this.stack.Pop();

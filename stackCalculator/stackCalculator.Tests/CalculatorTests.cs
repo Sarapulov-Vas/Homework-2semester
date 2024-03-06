@@ -9,6 +9,8 @@ public class Tests
     [SetUp]
     public void Setup()
     {
+        ListStackCalculator = new StackCalculator(new ListStack());
+        ArrayStackCalculator = new StackCalculator(new ArrayStack());
     }
 
     [Test]
@@ -93,5 +95,24 @@ public class Tests
 
         Assert.That(ListStackCalculator.Calculate("-1 0 -"), Is.EqualTo(1));
         Assert.That(ArrayStackCalculator.Calculate("-1 0 -"), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void TestMultiplication ()
+    {
+        Assert.That(ListStackCalculator.Calculate("15 19 *"), Is.EqualTo(285));
+        Assert.That(ArrayStackCalculator.Calculate("15 19 *"), Is.EqualTo(285));
+
+        Assert.That(ListStackCalculator.Calculate("111111 -111111 *"), Is.EqualTo(-12345654321));
+        Assert.That(ArrayStackCalculator.Calculate("111111 -111111 *"), Is.EqualTo(-12345654321));
+
+        Assert.That(ListStackCalculator.Calculate("-111111 -111111 *"), Is.EqualTo(12345654321));
+        Assert.That(ArrayStackCalculator.Calculate("-111111 -111111 *"), Is.EqualTo(12345654321));
+
+        Assert.That(ListStackCalculator.Calculate("0 0 *"), Is.EqualTo(0));
+        Assert.That(ArrayStackCalculator.Calculate("0 0 *"), Is.EqualTo(0));
+
+        Assert.That(ListStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
+        Assert.That(ArrayStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
     }
 }

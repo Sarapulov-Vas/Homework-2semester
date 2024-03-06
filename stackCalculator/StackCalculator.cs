@@ -35,6 +35,11 @@ internal class StackCalculator
                 if (!int.TryParse(element, out number))
                 {
                     Console.WriteLine("Wrong input!");
+                    while (this.stack.Length != 0)
+                    {
+                        this.stack.Pop();
+                    }
+
                     return 0;
                 }
 
@@ -59,6 +64,11 @@ internal class StackCalculator
                         if (Math.Abs(secondNumber) <= epsilon)
                         {
                             Console.WriteLine("Division by zero!");
+                            while (this.stack.Length != 0)
+                            {
+                                this.stack.Pop();
+                            }
+
                             return 0;
                         }
 
@@ -66,12 +76,22 @@ internal class StackCalculator
                         break;
                     default:
                         Console.WriteLine("Wrong input!");
+                        while (this.stack.Length != 0)
+                        {
+                            this.stack.Pop();
+                        }
+
                         return 0;
                 }
             }
             else
             {
                 Console.WriteLine("Too many operations");
+                while (this.stack.Length != 0)
+                {
+                    this.stack.Pop();
+                }
+
                 return 0;
             }
         }
@@ -79,6 +99,11 @@ internal class StackCalculator
         if (this.stack.Length != 1)
         {
             Console.WriteLine("Too much argument!");
+            while (this.stack.Length != 0)
+            {
+                this.stack.Pop();
+            }
+
             return 0;
         }
 

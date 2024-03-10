@@ -1,6 +1,6 @@
 namespace stackCalculator.Tests;
 
-public class Tests
+public class CalculateorTests
 {
     double epsilon = 1e-10;
     private static IEnumerable<TestCaseData> Calculator()

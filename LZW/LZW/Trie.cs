@@ -9,9 +9,9 @@ internal class Trie
     private TrieNode root;
 
     /// <summary>
-    /// Gets the number of elements in the trie.
+    /// Counter of elemens.
     /// </summary>
-    public int Size { get; private set; }
+    private int currentNumber = 1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Trie"/> class.
@@ -20,17 +20,23 @@ internal class Trie
     {
         this.Size = 0;
         this.root = new TrieNode();
+        this.root.Number = 0;
     }
+
+    /// <summary>
+    /// Gets the number of elements in the trie.
+    /// </summary>
+    public int Size { get; private set; }
 
     /// <summary>
     /// Adding an item to trie.
     /// </summary>
     /// <param name="element">Added string.</param>
     /// <returns>Whether the item was successfully added.</returns>
-    public bool Add(string element)
+    public bool Add(List<byte> element)
     {
         TrieNode currentNode = this.root;
-        for (int i = 0; i < element.Length; ++i)
+        for (int i = 0; i < element.Count; ++i)
         {
             if (!currentNode.NextNode.ContainsKey(element[i]))
             {
@@ -38,14 +44,14 @@ internal class Trie
                 ++this.Size;
             }
 
-            ++currentNode.WordCount;
             currentNode = currentNode.NextNode[element[i]];
         }
 
-        ++currentNode.WordCount;
         if (currentNode.IsTerminal == false)
         {
             currentNode.IsTerminal = true;
+            currentNode.Number = this.currentNumber;
+            this.currentNumber++;
             return true;
         }
 
@@ -57,20 +63,20 @@ internal class Trie
     /// </summary>
     /// <param name="element">Element to be checked.</param>
     /// <returns>Whether the element is in trie.</returns>
-    public bool Contains(string element)
+    public int Contains(List<byte> element)
     {
         TrieNode currentNode = this.root;
         foreach (var symbol in element)
         {
             if (!currentNode.NextNode.ContainsKey(symbol))
             {
-                return false;
+                return 0;
             }
 
             currentNode = currentNode.NextNode[symbol];
         }
 
-        return currentNode.IsTerminal;
+        return currentNode.Number;
     }
 
     /// <summary>
@@ -78,9 +84,9 @@ internal class Trie
     /// </summary>
     /// <param name="element">The element to be deleted.</param>
     /// <returns>Whether the element has been removed.</returns>
-    public bool Remove(string element)
+    public bool Remove(List<byte> element)
     {
-        if (!this.Contains(element))
+        if (this.Contains(element) == 0)
         {
             return false;
         }
@@ -90,40 +96,15 @@ internal class Trie
     }
 
     /// <summary>
-    /// A method to get the number of rows starting with a prefix.
-    /// </summary>
-    /// <param name="prefix">The prefix with which the string begins.</param>
-    /// <returns>The number of lines starting with the prefix.</returns>
-    public int HowManyStartsWithPrefix(string prefix)
-    {
-        TrieNode currentNode = this.root;
-        foreach (var symbol in prefix)
-        {
-            if (currentNode.NextNode.ContainsKey(symbol))
-            {
-                currentNode = currentNode.NextNode[symbol];
-            }
-            else
-            {
-                Console.WriteLine("Prefix not found!");
-                return 0;
-            }
-        }
-
-        return currentNode.WordCount;
-    }
-
-    /// <summary>
     /// A recursive method for removing an element.
     /// </summary>
     /// <param name="element">Removal Element.</param>
     /// <param name="currentNode">Pointer to the current trie element.</param>
     /// <returns>Whether an item can be deleted.</returns>
-    private bool RemoveElement(string element, TrieNode currentNode)
+    private bool RemoveElement(List<byte> element, TrieNode currentNode)
     {
-        if (element.Length > 0)
+        if (element.Count > 0)
         {
-            --currentNode.WordCount;
             if (this.RemoveElement(element[1..], currentNode.NextNode[element[0]]))
             {
                 currentNode.NextNode.Remove(element[0]);
@@ -139,7 +120,6 @@ internal class Trie
         else
         {
             currentNode.IsTerminal = false;
-            --currentNode.WordCount;
             if (currentNode.NextNode.Count == 0)
             {
                 --this.Size;
@@ -161,14 +141,13 @@ internal class Trie
         public TrieNode()
         {
             this.IsTerminal = false;
-            this.WordCount = 0;
-            this.NextNode = new Dictionary<char, TrieNode>();
+            this.NextNode = new Dictionary<byte, TrieNode>();
         }
 
         /// <summary>
         /// Gets or sets a dictionary of pointers to the following items.
         /// </summary>
-        public Dictionary<char, TrieNode> NextNode { get; set; }
+        public Dictionary<byte, TrieNode> NextNode { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether a variable indicating the end of a line.
@@ -176,8 +155,8 @@ internal class Trie
         public bool IsTerminal { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of lines containing this element.
+        /// Gets or sets number.
         /// </summary>
-        public int WordCount { get; set; }
+        public int Number { get; set; }
     }
 }

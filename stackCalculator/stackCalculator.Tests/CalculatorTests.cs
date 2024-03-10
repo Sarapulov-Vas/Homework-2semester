@@ -1,134 +1,102 @@
-using stackCalculator;
 namespace stackCalculator.Tests;
 
 public class Tests
 {
-    private StackCalculator ListStackCalculator = new StackCalculator(new ListStack());
-    private StackCalculator ArrayStackCalculator = new StackCalculator(new ArrayStack());
-
-    [SetUp]
-    public void Setup()
+    double epsilon = 1e-10;
+    private static IEnumerable<TestCaseData> Calculator()
     {
-        ListStackCalculator = new StackCalculator(new ListStack());
-        ArrayStackCalculator = new StackCalculator(new ArrayStack());
+        yield return new TestCaseData(new StackCalculator(new ListStack()));
+        yield return new TestCaseData(new StackCalculator(new ArrayStack()));
     }
 
-    [Test]
-    public void TestCorrectInput ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestCorrectInput (StackCalculator calculator)
     {
-        Assert.That(ListStackCalculator.Calculate("1 2 2 4 5 * / + -"), Is.EqualTo(11));
-        Assert.That(ArrayStackCalculator.Calculate("1 2 2 4 5 * / + -"), Is.EqualTo(11));
+        Assert.That(Math.Abs(calculator.Calculate("1 2 2 4 5 * / + -") - 11) < epsilon);
     }
 
-    [Test]
-    public void TestDivisionByZero ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestDivisionByZero (StackCalculator calculator)
     {
-        Assert.Throws<DivideByZeroException>(() => ListStackCalculator.Calculate("0 2 /"));
-        Assert.Throws<DivideByZeroException>(() => ArrayStackCalculator.Calculate("0 2 /"));
+        Assert.Throws<DivideByZeroException>(() => calculator.Calculate("0 2 /"));
     }
 
-    [Test]
-    public void TestIncorrectInput ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestIncorrectInput (StackCalculator calculator)
     {
-        Assert.Throws<ArgumentException>(() => ListStackCalculator.Calculate("0b1 -10e +"));
-        Assert.Throws<ArgumentException>(() => ArrayStackCalculator.Calculate("0b1 -10e +"));
+        Assert.Throws<ArgumentException>(() => calculator.Calculate("0b1 -10e +"));
 
-        Assert.Throws<ArgumentException>(() => ListStackCalculator.Calculate("5 10 ="));
-        Assert.Throws<ArgumentException>(() => ArrayStackCalculator.Calculate("5 10 ="));
+        Assert.Throws<ArgumentException>(() => calculator.Calculate("5 10 ="));
 
-        Assert.Throws<ArgumentException>(() => ListStackCalculator.Calculate(""));
-        Assert.Throws<ArgumentException>(() => ArrayStackCalculator.Calculate(""));
+        Assert.Throws<ArgumentException>(() => calculator.Calculate(""));
     }
 
-    [Test]
-    public void TestMoreArgumentsThanOperations ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestMoreArgumentsThanOperations (StackCalculator calculator)
     {
-        Assert.Throws<Exception>(() => ListStackCalculator.Calculate("1 2 3 +"));
-        Assert.Throws<Exception>(() => ArrayStackCalculator.Calculate("1 2 3 +"));
+        Assert.Throws<Exception>(() => calculator.Calculate("1 2 3 +"));
     }
 
-    [Test]
-    public void TestMoreOperationsThanArguments ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestMoreOperationsThanArguments (StackCalculator calculator)
     {
-        Assert.Throws<Exception>(() => ListStackCalculator.Calculate("1 2 + +"));
-        Assert.Throws<Exception>(() => ArrayStackCalculator.Calculate("1 2 + +"));
+        Assert.Throws<Exception>(() => calculator.Calculate("1 2 + +"));
     }
 
-    [Test]
-    public void TestAddition ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestAddition (StackCalculator calculator)
     {
-        Assert.That(ListStackCalculator.Calculate("15 19 +"), Is.EqualTo(34));
-        Assert.That(ArrayStackCalculator.Calculate("15 19 +"), Is.EqualTo(34));
+        Assert.That(Math.Abs(calculator.Calculate("15 19 +") - 34) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("2147483647 2147483647 +"), Is.EqualTo(4294967294));
-        Assert.That(ArrayStackCalculator.Calculate("2147483647 2147483647 +"), Is.EqualTo(4294967294));
+        Assert.That(Math.Abs(calculator.Calculate("2147483647 2147483647 +") - 4294967294) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-2147483648 -2147483648 +"), Is.EqualTo(-4294967296));
-        Assert.That(ArrayStackCalculator.Calculate("-2147483648 -2147483648 +"), Is.EqualTo(-4294967296));
+        Assert.That(Math.Abs(calculator.Calculate("-2147483648 -2147483648 +") - -4294967296) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-2147483648 2 +"), Is.EqualTo(-2147483646));
-        Assert.That(ArrayStackCalculator.Calculate("-2147483648 2 +"), Is.EqualTo(-2147483646));
+        Assert.That(Math.Abs(calculator.Calculate("-2147483648 2 +") - -2147483646) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("0 0 +"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("0 0 +"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("0 0 +")) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-1 0 +"), Is.EqualTo(-1));
-        Assert.That(ArrayStackCalculator.Calculate("-1 0 +"), Is.EqualTo(-1));
+        Assert.That(Math.Abs(calculator.Calculate("-1 0 +") - -1) < epsilon);
     }
-    [Test]
-    public void TestSubtraction ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestSubtraction (StackCalculator calculator)
     {
-        Assert.That(ListStackCalculator.Calculate("15 19 -"), Is.EqualTo(4));
-        Assert.That(ArrayStackCalculator.Calculate("15 19 -"), Is.EqualTo(4));
+        Assert.That(Math.Abs(calculator.Calculate("15 19 -") - 4) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("2147483647 2147483647 -"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("2147483647 2147483647 -"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("2147483647 2147483647 -")) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-2147483648 -2147483648 -"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("-2147483648 -2147483648 -"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("-2147483648 -2147483648 -")) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-2147483648 2 -"), Is.EqualTo(2147483650));
-        Assert.That(ArrayStackCalculator.Calculate("-2147483648 2 -"), Is.EqualTo(2147483650));
+        Assert.That(Math.Abs(calculator.Calculate("-2147483648 2 -") - 2147483650) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("0 0 -"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("0 0 -"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("0 0 -")) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-1 0 -"), Is.EqualTo(1));
-        Assert.That(ArrayStackCalculator.Calculate("-1 0 -"), Is.EqualTo(1));
+        Assert.That(Math.Abs(calculator.Calculate("-1 0 -") - 1) < epsilon);
     }
 
-    [Test]
-    public void TestMultiplication ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestMultiplication (StackCalculator calculator)
     {
-        Assert.That(ListStackCalculator.Calculate("15 19 *"), Is.EqualTo(285));
-        Assert.That(ArrayStackCalculator.Calculate("15 19 *"), Is.EqualTo(285));
+        Assert.That(Math.Abs(calculator.Calculate("15 19 *") - 285) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("111111 -111111 *"), Is.EqualTo(-12345654321));
-        Assert.That(ArrayStackCalculator.Calculate("111111 -111111 *"), Is.EqualTo(-12345654321));
+        Assert.That(Math.Abs(calculator.Calculate("111111 -111111 *") - -12345654321) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-111111 -111111 *"), Is.EqualTo(12345654321));
-        Assert.That(ArrayStackCalculator.Calculate("-111111 -111111 *"), Is.EqualTo(12345654321));
+        Assert.That(Math.Abs(calculator.Calculate("-111111 -111111 *") - 12345654321) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("0 0 *"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("0 0 *"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("0 0 *")) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("-1 0 *")) < epsilon);
     }
 
-    [Test]
-    public void TestDivision ()
+    [TestCaseSource(nameof(Calculator))]
+    public void TestDivision (StackCalculator calculator)
     {
-        Assert.That(ListStackCalculator.Calculate("5 15 /"), Is.EqualTo(3));
-        Assert.That(ArrayStackCalculator.Calculate("5 15 /"), Is.EqualTo(3));
+        Assert.That(Math.Abs(calculator.Calculate("5 15 /") - 3) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("111111 -111111 /"), Is.EqualTo(-1));
-        Assert.That(ArrayStackCalculator.Calculate("111111 -111111 /"), Is.EqualTo(-1));
+        Assert.That(Math.Abs(calculator.Calculate("111111 -111111 /") - -1) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-111111 -111111 /"), Is.EqualTo(1));
-        Assert.That(ArrayStackCalculator.Calculate("-111111 -111111 /"), Is.EqualTo(1));
+        Assert.That(Math.Abs(calculator.Calculate("-111111 -111111 /") - 1) < epsilon);
 
-        Assert.That(ListStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
-        Assert.That(ArrayStackCalculator.Calculate("-1 0 *"), Is.EqualTo(0));
+        Assert.That(Math.Abs(calculator.Calculate("-1 0 *")) < epsilon);
     }
 }

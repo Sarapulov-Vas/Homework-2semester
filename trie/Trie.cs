@@ -9,11 +9,6 @@ internal class Trie
     private TrieNode root;
 
     /// <summary>
-    /// Gets the number of elements in the trie.
-    /// </summary>
-    public int Size { get; private set; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="Trie"/> class.
     /// </summary>
     public Trie()
@@ -21,6 +16,11 @@ internal class Trie
         this.Size = 0;
         this.root = new TrieNode();
     }
+
+    /// <summary>
+    /// Gets the number of elements in the trie.
+    /// </summary>
+    public int Size { get; private set; }
 
     /// <summary>
     /// Adding an item to trie.

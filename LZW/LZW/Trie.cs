@@ -11,7 +11,7 @@ internal class Trie
     /// <summary>
     /// Counter of elemens.
     /// </summary>
-    private ulong currentNumber = 1;
+    private int currentNumber = 1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Trie"/> class.
@@ -63,7 +63,7 @@ internal class Trie
     /// </summary>
     /// <param name="element">Element to be checked.</param>
     /// <returns>Whether the element is in trie.</returns>
-    public ulong Contains(List<byte> element)
+    public int Contains(List<byte> element)
     {
         TrieNode currentNode = this.root;
         foreach (var symbol in element)
@@ -157,6 +157,6 @@ internal class Trie
         /// <summary>
         /// Gets or sets number.
         /// </summary>
-        public ulong Number { get; set; }
+        public int Number { get; set; }
     }
 }

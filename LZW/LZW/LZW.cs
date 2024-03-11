@@ -1,8 +1,3 @@
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-
-
 /// <summary>
 /// Class realizing file compression and decompression by LZW algorithm.
 /// </summary>
@@ -15,17 +10,15 @@ internal class LZW
     public static void Compression()
     {
         var originalText = File.ReadAllBytes("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.txt");
-        var compressionFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.zipped", FileMode.Create);
+        var compressionFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.txt.zipped", FileMode.Create);
         var dictionary = new Trie();
         var substring = new List<byte>();
-        var countOfBytes = new List<ulong> { 0 };
+        var countOfBytes = new List<int> { 0 };
         int currentNumberOfBytes = 1;
-        ulong index;
-        //compressionFile.WriteByte(10);
+        int index;
         foreach (var element in originalText)
         {
             substring.Add(element);
-            Console.WriteLine(element);
             if (dictionary.Contains(substring) == 0)
             {
                 substring.RemoveAt(substring.Count - 1);
@@ -38,8 +31,6 @@ internal class LZW
 
                 countOfBytes[countOfBytes.Count - 1]++;
                 byte[] bytes = BitConverter.GetBytes(dictionary.Contains(substring));
-                // Console.WriteLine(dictionary.Contains(substring));
-                // Console.WriteLine(element);
                 compressionFile.Write(bytes, 0, currentNumberOfBytes);
                 compressionFile.WriteByte(element);
                 substring.Add(element);
@@ -47,85 +38,93 @@ internal class LZW
                 substring.Clear();
             }
         }
+
         if (substring.Count != 0)
         {
             byte[] bytes = BitConverter.GetBytes(dictionary.Contains(substring));
             compressionFile.Write(bytes, 0, currentNumberOfBytes);
+            countOfBytes[countOfBytes.Count - 1]++;
+        }
+
+        compressionFile.WriteByte(10);
+        foreach (var element in countOfBytes)
+        {
+            compressionFile.Write(BitConverter.GetBytes(element), 0, (int)Math.Ceiling(Math.Ceiling(Math.Log2(element)) / 8));
+            compressionFile.WriteByte(32);
         }
 
         compressionFile.Close();
-        Console.WriteLine();
-        // var compressedFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.zipped", FileMode.Open);
-        // foreach (var element in countOfBytes)
-        // {
-        //     compressedFile.Write(BitConverter.GetBytes(element), 0, (int)Math.Ceiling(Math.Ceiling(Math.Log2(element)) / 8));
-        //     compressedFile.WriteByte(32);
-        // }
-
-        // compressedFile.WriteByte(10);
-        // compressedFile.Close();
     }
 
     public static void Decompression()
     {
-        var originalFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/original.txt", FileMode.Create);
-        var compressedFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.zipped", FileMode.Open);
-        var countOfBytes = new List<ulong>() { 262, 557 };
+        var compressedFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.txt.zipped", FileMode.Open);
+        var originalFile = new FileStream("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test1.txt", FileMode.Create);
+        var countOfBytes = new List<int>();
         var substrings = new List<byte[]>();
         substrings.Add([]);
         var value = new byte[8];
         int counter = 0;
-        // while (true)
-        // {
-        //     byte buffer = (byte)compressedFile.ReadByte();
-        //     if (buffer == 10)
-        //     {
-        //         break;
-        //     }
-
-        //     if (buffer == 32)
-        //     {
-        //         counter = 0;
-        //         countOfBytes.Add(BitConverter.ToUInt64(value));
-        //         Array.Clear(value);
-        //         continue;
-        //     }
-
-        //     value[counter] = buffer;
-        //     counter++;
-        // }
-
-        while (true)
+        compressedFile.Position = compressedFile.Length - 1;
+        byte buffer = (byte)compressedFile.ReadByte();
+        compressedFile.Position--;
+        while (buffer != 10)
         {
-            countOfBytes[counter]--;
-
-            byte buffer = (byte)compressedFile.ReadByte();
-            if (buffer == 255)
-            {
-                break;
-            }
-            Console.WriteLine(buffer);
-        //     value[0] = buffer;
-        //     for (int i = 0; i < counter; ++i)
-        //     {
-        //         buffer = (byte)compressedFile.ReadByte();
-        //         value[i + 1] = buffer;
-        //     }
-
-        //     originalFile.Write(substrings[(int)BitConverter.ToUInt64(value)]);
-        //     buffer = (byte)compressedFile.ReadByte();
-        //     originalFile.WriteByte(buffer);
-        //     var currentSubstring = new byte[substrings[BitConverter.ToInt32(value)].Length + 1];
-        //     currentSubstring[^1] = buffer;
-        //     substrings.Add(currentSubstring);
-        //     Array.Clear(value);
-        //     if (countOfBytes[counter] == 0)
-        //     {
-        //         counter++;
-        //     }
+            compressedFile.Position--;
+            buffer = (byte)compressedFile.ReadByte();
+            compressedFile.Position--;
         }
 
-        // compressedFile.Close();
-        // originalFile.Close();
+        compressedFile.Position++;
+        while (compressedFile.Position != compressedFile.Length)
+        {
+            buffer = (byte)compressedFile.ReadByte();
+
+            if (buffer == 32)
+            {
+                counter = 0;
+                countOfBytes.Add(BitConverter.ToInt32(value));
+                Array.Clear(value);
+                continue;
+            }
+
+            value[counter] = buffer;
+            counter++;
+        }
+
+        compressedFile.Position = 0;
+        var numberOfCodeSequences = countOfBytes.Sum();
+        for (int j = 0; j < numberOfCodeSequences; ++j)
+        {
+            buffer = (byte)compressedFile.ReadByte();
+            value[0] = buffer;
+            for (int i = 0; i < counter; ++i)
+            {
+                buffer = (byte)compressedFile.ReadByte();
+                value[i + 1] = buffer;
+            }
+
+            var substringIndex = BitConverter.ToInt32(value);
+            originalFile.Write(substrings[substringIndex]);
+            buffer = (byte)compressedFile.ReadByte();
+            if (compressedFile.Length == compressedFile.Position)
+            {
+                 break;
+            }
+
+            originalFile.WriteByte(buffer);
+            substrings.Add(new byte[substrings[substringIndex].Length + 1]);
+            Array.Copy(substrings[substringIndex], substrings[^1], substrings[substringIndex].Length);
+            substrings[^1][^1] = buffer;
+            Array.Clear(value);
+            countOfBytes[counter]--;
+            if (countOfBytes[counter] == 0)
+            {
+                counter++;
+            }
+        }
+
+        compressedFile.Close();
+        originalFile.Close();
     }
 }

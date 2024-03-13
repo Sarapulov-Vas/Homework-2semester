@@ -1,6 +1,3 @@
-using System.ComponentModel;
-
-
 /// <summary>
 /// Class realizing file compression and decompression by LZW algorithm.
 /// </summary>

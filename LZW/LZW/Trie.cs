@@ -11,7 +11,7 @@ internal class Trie
     /// <summary>
     /// Counter of elemens.
     /// </summary>
-    private int currentNumber = 1;
+    private int currentNumber = 0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Trie"/> class.
@@ -20,7 +20,6 @@ internal class Trie
     {
         this.Size = 0;
         this.root = new TrieNode();
-        this.root.Number = 0;
     }
 
     /// <summary>
@@ -70,7 +69,7 @@ internal class Trie
         {
             if (!currentNode.NextNode.ContainsKey(symbol))
             {
-                return 0;
+                return -1;
             }
 
             currentNode = currentNode.NextNode[symbol];

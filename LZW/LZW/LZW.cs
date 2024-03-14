@@ -3,7 +3,7 @@ using System.Text;
 /// <summary>
 /// Class realizing file compression and decompression by LZW algorithm.
 /// </summary>
-internal class LZW
+public class LZW
 {
     /// <summary>
     /// Compression method.
@@ -16,6 +16,7 @@ internal class LZW
         {
             throw new Exception("Empty file cannot be compressed!");
         }
+
         var compressionFile = new FileStream(path + ".zipped", FileMode.Create);
         var dictionary = new Trie();
         var entryPhrase = new List<byte>();
@@ -23,7 +24,7 @@ internal class LZW
         int currentNumberOfBytes = 1;
         int index;
         int endIndex = 0;
-        BWT BWTText = new BWT();
+        var BWTText = new BWT();
         for (int i = 0; i < 256; ++i)
         {
             dictionary.Add([(byte)i]);

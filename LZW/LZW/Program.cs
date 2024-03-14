@@ -22,11 +22,27 @@
                 {
                     if (args.Length == 3 && args[2] == "-b")
                     {
+                        try
+                        {
                         LZW.Compression(args[0], true);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Compression failed!");
+                            return;
+                        }
                     }
                     else if (args.Length == 2)
                     {
+                        try
+                        {
                         LZW.Compression(args[0]);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Compression failed!");
+                            return;
+                        }
                     }
                     else
                     {

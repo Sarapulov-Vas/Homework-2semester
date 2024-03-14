@@ -2,7 +2,66 @@
 {
     private static void Main(string[] args)
     {
-        LZW.Compression("/home/sarapulov-vasilii/work/Homework-2semester/BubbleSort/bin/Debug/net8.0/BubbleSort", false);
-        LZW.Decompression("/home/sarapulov-vasilii/work/Homework-2semester/BubbleSort/bin/Debug/net8.0/BubbleSort.zipped");
+        if (args.Length > 3)
+        {
+            Console.WriteLine("Wrong input!");
+            return;
+        }
+        else if (args.Length == 1 && args[0].CompareTo("--help") == 0)
+        {
+            Console.WriteLine("Enter the path to the file.");
+            Console.WriteLine("\t-c, The key to compress the file.");
+            Console.WriteLine("\t-u, The key to unzip the file.");
+            Console.WriteLine("\t-b, Key to use BWT when compressing a file.");
+        }
+        else if (args.Length >= 2)
+        {
+            if (File.Exists(args[0]))
+            {
+                if (args[1] == "-c")
+                {
+                    if (args.Length == 3 && args[2] == "-b")
+                    {
+                        LZW.Compression(args[0], true);
+                    }
+                    else if (args.Length == 2)
+                    {
+                        LZW.Compression(args[0]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Wrong input!");
+                        return;
+                    }
+                }
+                else if (args[1] == "-u")
+                {
+                    if (string.Compare(args[0][^7..], ".zipped") == 0)
+                    {
+                        LZW.Decompression(args[0]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("The file cannot be uncompressed.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Wrong input!");
+                    return;
+                }
+            }
+            else
+            {
+                Console.WriteLine("File not found!");
+                return;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Wrong input!");
+            return;
+        }
     }
 }

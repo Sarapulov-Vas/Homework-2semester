@@ -9,6 +9,45 @@ internal class BWT
     private int[] suffixArray;
 
     /// <summary>
+    /// Inverse BWT transformation.
+    /// </summary>
+    /// <param name="byteSequenceingBWT">Converted byteSequenceing.</param>
+    /// <param name="endIndex">End of line position.</param>
+    /// <returns>Original byteSequenceing.</returns>
+    public static byte[] InverseBWT(List<byte> byteSequenceingBWT, int endIndex)
+    {
+        if (byteSequenceingBWT.Count == 0)
+        {
+            return [];
+        }
+
+        byte[] bytes = byteSequenceingBWT.Distinct().ToArray();
+        var characterIndex = new int[bytes.Length];
+        var sortedIndexes = new int[byteSequenceingBWT.Count];
+        var originalbyteSequenceing = new byte[byteSequenceingBWT.Count];
+        Array.Sort(bytes);
+        for (int i = 1; i < bytes.Length; ++i)
+        {
+            characterIndex[i] = byteSequenceingBWT.Where(sign => sign == bytes[i - 1]).Count() + characterIndex[i - 1];
+        }
+
+        for (int i = 0; i < byteSequenceingBWT.Count; ++i)
+        {
+            sortedIndexes[i] = characterIndex[Array.IndexOf(bytes, byteSequenceingBWT[i])];
+            characterIndex[Array.IndexOf(bytes, byteSequenceingBWT[i])]++;
+        }
+
+        originalbyteSequenceing[^1] = byteSequenceingBWT[endIndex];
+        for (int i = 1; i < byteSequenceingBWT.Count; ++i)
+        {
+            endIndex = sortedIndexes[endIndex];
+            originalbyteSequenceing[^(i + 1)] = byteSequenceingBWT[endIndex];
+        }
+
+        return originalbyteSequenceing;
+    }
+
+    /// <summary>
     /// Retrieving an element by index.
     /// </summary>
     /// <param name="byteSequence">The original byte sequence.</param>
@@ -55,45 +94,6 @@ internal class BWT
         }
 
         return endIndex;
-    }
-
-    /// <summary>
-    /// Inverse BWT transformation.
-    /// </summary>
-    /// <param name="byteSequenceingBWT">Converted byteSequenceing.</param>
-    /// <param name="endIndex">End of line position.</param>
-    /// <returns>Original byteSequenceing.</returns>
-    public static byte[] InverseBWT(List<byte> byteSequenceingBWT, int endIndex)
-    {
-        if (byteSequenceingBWT.Count == 0)
-        {
-            return [];
-        }
-
-        byte[] bytes = byteSequenceingBWT.Distinct().ToArray();
-        var characterIndex = new int[bytes.Length];
-        var sortedIndexes = new int[byteSequenceingBWT.Count];
-        var originalbyteSequenceing = new byte[byteSequenceingBWT.Count];
-        Array.Sort(bytes);
-        for (int i = 1; i < bytes.Length; ++i)
-        {
-            characterIndex[i] = byteSequenceingBWT.Where(sign => sign == bytes[i - 1]).Count() + characterIndex[i - 1];
-        }
-
-        for (int i = 0; i < byteSequenceingBWT.Count; ++i)
-        {
-            sortedIndexes[i] = characterIndex[Array.IndexOf(bytes, byteSequenceingBWT[i])];
-            characterIndex[Array.IndexOf(bytes, byteSequenceingBWT[i])]++;
-        }
-
-        originalbyteSequenceing[^1] = byteSequenceingBWT[endIndex];
-        for (int i = 1; i < byteSequenceingBWT.Count; ++i)
-        {
-            endIndex = sortedIndexes[endIndex];
-            originalbyteSequenceing[^(i + 1)] = byteSequenceingBWT[endIndex];
-        }
-
-        return originalbyteSequenceing;
     }
 
     /// <summary>

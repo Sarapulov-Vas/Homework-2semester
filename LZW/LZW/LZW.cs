@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text;
 
 /// <summary>
@@ -5,6 +6,9 @@ using System.Text;
 /// </summary>
 public class LZW
 {
+    private static byte currentByte = 0;
+    private static int counterBits = 0;
+
     /// <summary>
     /// Compression method.
     /// </summary>
@@ -14,33 +18,30 @@ public class LZW
         var originalText = File.ReadAllBytes(path);
         if (originalText.Length == 0)
         {
-            throw new Exception("Empty file cannot be compressed!");
+            Console.WriteLine("Empty file cannot be compressed!");
+            return;
         }
 
         var compressionFile = new FileStream(path + ".zipped", FileMode.Create);
         var dictionary = new Trie();
         var entryPhrase = new List<byte>();
-        var numberOfBytes = new List<int> { 0 };
-        int currentNumberOfBytes = 1;
+        var numberOfBits = new List<int> { 0 };
+        int currentNumberOfBits = 1;
         int index;
         int endIndex = 0;
         var BWTText = new BWT();
+        currentByte = 0;
+        counterBits = 0;
+        if (BWT == true)
+        {
+            BWTText.DirectConversion(originalText);
+        }
         for (int i = 0; i < 256; ++i)
         {
             dictionary.Add([(byte)i]);
         }
 
-        if (BWT == true)
-        {
-            endIndex = BWTText.DirectConversion(originalText);
-            entryPhrase.Add(BWTText.GetElement(originalText, 0));
-        }
-        else
-        {
-            entryPhrase.Add(originalText[0]);
-        }
-
-        for (int i = 1; i < originalText.Length; ++i)
+        for (int i = 0; i < originalText.Length; ++i)
         {
             if (BWT == true)
             {
@@ -54,15 +55,19 @@ public class LZW
             if (dictionary.Contains(entryPhrase) == -1)
             {
                 index = dictionary.Contains(entryPhrase[..^1]);
-                if (Math.Pow(2, currentNumberOfBytes * 8) <= index)
+                var bitArray = ConvertIntToBitArray(index);
+                if (Math.Pow(2, currentNumberOfBits) <= index)
                 {
-                    currentNumberOfBytes++;
-                    numberOfBytes.Add(0);
+                    for (int j = currentNumberOfBits; j < bitArray.Count; ++j)
+                    {
+                        numberOfBits.Add(0);
+                    }
+
+                    currentNumberOfBits = bitArray.Count();
                 }
 
-                numberOfBytes[numberOfBytes.Count - 1]++;
-                byte[] bytes = BitConverter.GetBytes(index);
-                compressionFile.Write(bytes, 0, currentNumberOfBytes);
+                numberOfBits[numberOfBits.Count - 1]++;
+                WriteValueInFile(bitArray, compressionFile, currentNumberOfBits);
                 dictionary.Add(entryPhrase);
                 entryPhrase.Clear();
                 if (BWT == true)
@@ -78,13 +83,24 @@ public class LZW
 
         if (entryPhrase.Count != 0)
         {
-            byte[] bytes = BitConverter.GetBytes(dictionary.Contains(entryPhrase));
-            compressionFile.Write(bytes, 0, currentNumberOfBytes);
-            numberOfBytes[numberOfBytes.Count - 1]++;
+            var bitArray = ConvertIntToBitArray(dictionary.Contains(entryPhrase));
+            WriteValueInFile(bitArray, compressionFile, currentNumberOfBits);
+            numberOfBits[numberOfBits.Count - 1]++;
+        }
+
+        if (counterBits != 0)
+        {
+            while (counterBits != 8)
+            {
+                currentByte = (byte)((currentByte << 1) + 0);
+                counterBits++;
+            }
+
+            compressionFile.WriteByte(currentByte);
         }
 
         compressionFile.WriteByte((byte)'\n');
-        foreach (var element in numberOfBytes)
+        foreach (var element in numberOfBits)
         {
             compressionFile.Write(Encoding.Default.GetBytes(element.ToString()));
             compressionFile.WriteByte((byte)' ');
@@ -96,7 +112,7 @@ public class LZW
             compressionFile.Write(Encoding.Default.GetBytes(endIndex.ToString()));
         }
 
-        Console.WriteLine($"Compression ratio: {(double)compressionFile.Length / originalText.Length * 100}");
+        Console.WriteLine($"Compression ratio: {(double)originalText.Length / compressionFile.Length}");
         compressionFile.Close();
     }
 
@@ -108,11 +124,14 @@ public class LZW
     {
         var compressedFile = new FileStream(path, FileMode.Open);
         var originalText = new List<byte>();
-        var numberOfBytes = new List<int>();
+        var numberOfBits = new List<int>();
         var dictionary = new List<byte[]>();
         var value = new StringBuilder();
         int counterBytes = 0;
+        int currentNumberOfBits = 0;
         int endOfText = -1;
+        currentByte = 0;
+        counterBits = 0;
         byte buffer = (byte)compressedFile.ReadByte();
         for (int i = 0; i < 256; ++i)
         {
@@ -147,7 +166,7 @@ public class LZW
             if (buffer == 32)
             {
                 counterBytes = 0;
-                numberOfBytes.Add(int.Parse(value.ToString()));
+                numberOfBits.Add(int.Parse(value.ToString()));
                 value.Clear();
                 continue;
             }
@@ -156,33 +175,31 @@ public class LZW
             counterBytes++;
         }
 
+        while (numberOfBits[currentNumberOfBits] == 0)
+        {
+            currentNumberOfBits++;
+        }
+
         compressedFile.Position = 0;
-        int prevCode, currCode;
-        var numberOfCodeSequences = numberOfBytes.Sum();
-        var byteCode = new byte[4];
-        byteCode[0] = (byte)compressedFile.ReadByte();
-        prevCode = BitConverter.ToInt32(byteCode);
+        var numberOfCodeSequences = numberOfBits.Sum();
+        currentByte = (byte)compressedFile.ReadByte();
+        numberOfBits[currentNumberOfBits]--;
+        counterBits = 0;
+        int prevCode = GetCodeFromCompressedFile(compressedFile, currentNumberOfBits);
+        while (numberOfBits[currentNumberOfBits] == 0)
+        {
+            currentNumberOfBits++;
+        }
+
         foreach (var element in dictionary[prevCode])
         {
             originalText.Add(element);
         }
 
-        numberOfBytes[counterBytes]--;
-        if (numberOfBytes[counterBytes] == 0)
-        {
-            counterBytes++;
-        }
-
         for (int i = 1; i < numberOfCodeSequences; ++i)
         {
-            byteCode[0] = (byte)compressedFile.ReadByte();
-            for (int j = 0; j < counterBytes; ++j)
-            {
-                byteCode[j + 1] = (byte)compressedFile.ReadByte();
-            }
-
-            currCode = BitConverter.ToInt32(byteCode);
-            numberOfBytes[counterBytes]--;
+            numberOfBits[currentNumberOfBits]--;
+            int currCode = GetCodeFromCompressedFile(compressedFile, currentNumberOfBits);
             if (currCode == dictionary.Count)
             {
                 var code = new byte[dictionary[prevCode].Length + 1];
@@ -204,9 +221,14 @@ public class LZW
             }
 
             prevCode = currCode;
-            if (numberOfBytes[counterBytes] == 0)
+            currCode = 0;
+            while (numberOfBits[currentNumberOfBits] == 0)
             {
-                counterBytes++;
+                currentNumberOfBits++;
+                if (currentNumberOfBits == numberOfBits.Count)
+                {
+                    break;
+                }
             }
         }
 
@@ -219,5 +241,65 @@ public class LZW
         {
             File.WriteAllBytes(path[..^7], originalText.ToArray());
         }
+    }
+
+    private static List<byte> ConvertIntToBitArray(int value)
+    {
+        var bitArray = new List<byte>();
+        while (value != 0)
+        {
+            bitArray.Add((byte)(value % 2));
+            value /= 2;
+        }
+
+        return bitArray;
+    }
+
+    private static void WriteValueInFile(List<byte> bitArray, FileStream compressionFile, int currentNumberOfBits)
+    {
+        for (int j = 0; j < currentNumberOfBits - bitArray.Count; ++j)
+        {
+            currentByte <<= 1;
+            counterBits++;
+            if (counterBits == 8)
+            {
+                compressionFile.WriteByte(currentByte);
+                currentByte = 0;
+                counterBits = 0;
+            }
+        }
+
+        for (int j = 0; j < bitArray.Count; ++j)
+        {
+            currentByte = (byte)((currentByte << 1) + bitArray[^(j + 1)]);
+            counterBits++;
+            if (counterBits == 8)
+            {
+                compressionFile.WriteByte(currentByte);
+                currentByte = 0;
+                counterBits = 0;
+            }
+        }
+    }
+
+    private static int GetCodeFromCompressedFile(FileStream compressedFile, int currentNumberOfBits)
+    {
+        int code = 0;
+        for (int j = 0; j < currentNumberOfBits + 1; ++j)
+        {
+            if (((1 << (7 - counterBits)) & currentByte) != 0)
+            {
+                code += (int)Math.Pow(2, currentNumberOfBits - j);
+            }
+
+            counterBits++;
+            if (counterBits == 8)
+            {
+                currentByte = (byte)compressedFile.ReadByte();
+                counterBits = 0;
+            }
+        }
+
+        return code;
     }
 }

@@ -1,3 +1,5 @@
+using System.Text;
+
 /// <summary>
 /// Class realizing file compression and decompression by LZW algorithm.
 /// </summary>
@@ -7,7 +9,7 @@ internal class LZW
     /// Compression method.
     /// </summary>
     /// <param name="path">File path.</param>
-    public static void Compression(string path)
+    public static void Compression(string path, bool BWT = false)
     {
         var originalText = File.ReadAllBytes(path);
         var compressionFile = new FileStream(path + ".zipped", FileMode.Create);
@@ -16,14 +18,34 @@ internal class LZW
         var numberOfBytes = new List<int> { 0 };
         int currentNumberOfBytes = 1;
         int index;
+        int endIndex = 0;
+        BWT BWTText = new BWT();
         for (int i = 0; i < 256; ++i)
         {
             dictionary.Add([(byte)i]);
         }
-        entryPhrase.Add(originalText[0]);
+
+        if (BWT == true)
+        {
+            endIndex = BWTText.DirectConversion(originalText);
+            entryPhrase.Add(BWTText.GetElement(originalText, 0));
+        }
+        else
+        {
+            entryPhrase.Add(originalText[0]);
+        }
+
         for (int i = 1; i < originalText.Length; ++i)
         {
-            entryPhrase.Add(originalText[i]);
+            if (BWT == true)
+            {
+                entryPhrase.Add(BWTText.GetElement(originalText, i));
+            }
+            else
+            {
+                entryPhrase.Add(originalText[i]);
+            }
+
             if (dictionary.Contains(entryPhrase) == -1)
             {
                 index = dictionary.Contains(entryPhrase[..^1]);
@@ -38,7 +60,14 @@ internal class LZW
                 compressionFile.Write(bytes, 0, currentNumberOfBytes);
                 dictionary.Add(entryPhrase);
                 entryPhrase.Clear();
-                entryPhrase.Add(originalText[i]);
+                if (BWT == true)
+                {
+                    entryPhrase.Add(BWTText.GetElement(originalText, i));
+                }
+                else
+                {
+                    entryPhrase.Add(originalText[i]);
+                }
             }
         }
 
@@ -52,8 +81,14 @@ internal class LZW
         compressionFile.WriteByte((byte)'\n');
         foreach (var element in numberOfBytes)
         {
-            compressionFile.Write(BitConverter.GetBytes(element), 0, (int)Math.Ceiling(Math.Ceiling(Math.Log2(element)) / 8));
+            compressionFile.Write(Encoding.Default.GetBytes(element.ToString()));
             compressionFile.WriteByte((byte)' ');
+        }
+
+        if (BWT == true)
+        {
+            compressionFile.WriteByte((byte)';');
+            compressionFile.Write(Encoding.Default.GetBytes(endIndex.ToString()));
         }
 
         Console.WriteLine($"Compression ratio: {(double)compressionFile.Length / originalText.Length * 100}");
@@ -67,19 +102,19 @@ internal class LZW
     public static void Decompression(string path)
     {
         var compressedFile = new FileStream(path, FileMode.Open);
-        var originalFile = new FileStream(path[..^7] + '1', FileMode.Create);
+        var originalText = new List<byte>();
         var numberOfBytes = new List<int>();
         var dictionary = new List<byte[]>();
-        var value = new byte[4];
+        var value = new StringBuilder();
         int counterBytes = 0;
-        compressedFile.Position = compressedFile.Length - 1;
+        int endOfText = -1;
         byte buffer = (byte)compressedFile.ReadByte();
         for (int i = 0; i < 256; ++i)
         {
             dictionary.Add([(byte)i]);
         }
 
-        compressedFile.Position--;
+        compressedFile.Position = compressedFile.Length - 2;
         while (buffer != (byte)'\n')
         {
             compressedFile.Position--;
@@ -87,41 +122,61 @@ internal class LZW
             compressedFile.Position--;
         }
 
-        var endOfText = compressedFile.Position;
         compressedFile.Position++;
         while (compressedFile.Position != compressedFile.Length)
         {
             buffer = (byte)compressedFile.ReadByte();
+            if (buffer == (byte)';')
+            {
+                while (compressedFile.Position != compressedFile.Length)
+                {
+                    buffer = (byte)compressedFile.ReadByte();
+                    value.Append((char)buffer);
+                    counterBytes = 0;
+                }
+
+                endOfText = int.Parse(value.ToString());
+                break;
+            }
 
             if (buffer == 32)
             {
                 counterBytes = 0;
-                numberOfBytes.Add(BitConverter.ToInt32(value));
-                Array.Clear(value);
+                numberOfBytes.Add(int.Parse(value.ToString()));
+                value.Clear();
                 continue;
             }
 
-            value[counterBytes] = buffer;
+            value.Append((char)buffer);
             counterBytes++;
         }
 
         compressedFile.Position = 0;
         int prevCode, currCode;
         var numberOfCodeSequences = numberOfBytes.Sum();
-        value[0] = (byte)compressedFile.ReadByte();
+        var byteCode = new byte[4];
+        byteCode[0] = (byte)compressedFile.ReadByte();
+        prevCode = BitConverter.ToInt32(byteCode);
+        foreach (var element in dictionary[prevCode])
+        {
+            originalText.Add(element);
+        }
 
-        prevCode = BitConverter.ToInt32(value);
-        originalFile.Write(dictionary[prevCode].ToArray());
         numberOfBytes[counterBytes]--;
+        if (numberOfBytes[counterBytes] == 0)
+        {
+            counterBytes++;
+        }
+
         for (int i = 1; i < numberOfCodeSequences; ++i)
         {
-            value[0] = (byte)compressedFile.ReadByte();
+            byteCode[0] = (byte)compressedFile.ReadByte();
             for (int j = 0; j < counterBytes; ++j)
             {
-                value[j + 1] = (byte)compressedFile.ReadByte();
+                byteCode[j + 1] = (byte)compressedFile.ReadByte();
             }
 
-            currCode = BitConverter.ToInt32(value);
+            currCode = BitConverter.ToInt32(byteCode);
             numberOfBytes[counterBytes]--;
             if (currCode == dictionary.Count)
             {
@@ -140,7 +195,7 @@ internal class LZW
 
             foreach (var element in dictionary[currCode])
             {
-                originalFile.WriteByte(element);
+                originalText.Add(element);
             }
 
             prevCode = currCode;
@@ -151,6 +206,13 @@ internal class LZW
         }
 
         compressedFile.Close();
-        originalFile.Close();
+        if (endOfText != -1)
+        {
+            File.WriteAllBytes(path[..^7], BWT.InverseBWT(originalText, endOfText));
+        }
+        else
+        {
+            File.WriteAllBytes(path[..^7], originalText.ToArray());
+        }
     }
 }

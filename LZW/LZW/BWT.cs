@@ -4,13 +4,36 @@
 internal class BWT
 {
     /// <summary>
+    /// Suffix array.
+    /// </summary>
+    private int[] suffixArray;
+
+    /// <summary>
+    /// Retrieving an element by index.
+    /// </summary>
+    /// <param name="byteSequence">The original byte sequence.</param>
+    /// <param name="index">Element Index.</param>
+    /// <returns>Byte after application of BWT.</returns>
+    public byte GetElement(byte[] byteSequence, int index)
+    {
+        if (suffixArray[index] == 0)
+        {
+            return byteSequence[^1];
+        }
+        else
+        {
+            return byteSequence[suffixArray[index] - 1];
+        }
+    }
+
+    /// <summary>
     /// BWT direct conversion function.
     /// </summary>
     /// <param name="byteSequence">Converted byteSequence.</param>
     /// <returns>The converted byteSequenceing and the position of the end of the byteSequence.</returns>
-    public static (byte[], int) DirectConversion(byte[] byteSequence)
+    public int DirectConversion(byte[] byteSequence)
     {
-        var suffixArray = new int[byteSequence.Length];
+        suffixArray = new int[byteSequence.Length];
         var resultbyteSequence = new byte[byteSequence.Length];
         for (int i = 0; i < byteSequence.Length; ++i)
         {
@@ -31,7 +54,7 @@ internal class BWT
             }
         }
 
-        return (resultbyteSequence, endIndex);
+        return endIndex;
     }
 
     /// <summary>
@@ -40,31 +63,31 @@ internal class BWT
     /// <param name="byteSequenceingBWT">Converted byteSequenceing.</param>
     /// <param name="endIndex">End of line position.</param>
     /// <returns>Original byteSequenceing.</returns>
-    public static byte[] InverseBWT(byte[] byteSequenceingBWT, int endIndex)
+    public static byte[] InverseBWT(List<byte> byteSequenceingBWT, int endIndex)
     {
-        if (byteSequenceingBWT.Length == 0)
+        if (byteSequenceingBWT.Count == 0)
         {
-            return[];
+            return [];
         }
 
         byte[] bytes = byteSequenceingBWT.Distinct().ToArray();
         var characterIndex = new int[bytes.Length];
-        var sortedIndexes = new int[byteSequenceingBWT.Length];
-        var originalbyteSequenceing = new byte[byteSequenceingBWT.Length];
+        var sortedIndexes = new int[byteSequenceingBWT.Count];
+        var originalbyteSequenceing = new byte[byteSequenceingBWT.Count];
         Array.Sort(bytes);
         for (int i = 1; i < bytes.Length; ++i)
         {
             characterIndex[i] = byteSequenceingBWT.Where(sign => sign == bytes[i - 1]).Count() + characterIndex[i - 1];
         }
 
-        for (int i = 0; i < byteSequenceingBWT.Length; ++i)
+        for (int i = 0; i < byteSequenceingBWT.Count; ++i)
         {
             sortedIndexes[i] = characterIndex[Array.IndexOf(bytes, byteSequenceingBWT[i])];
             characterIndex[Array.IndexOf(bytes, byteSequenceingBWT[i])]++;
         }
 
         originalbyteSequenceing[^1] = byteSequenceingBWT[endIndex];
-        for (int i = 1; i < byteSequenceingBWT.Length; ++i)
+        for (int i = 1; i < byteSequenceingBWT.Count; ++i)
         {
             endIndex = sortedIndexes[endIndex];
             originalbyteSequenceing[^(i + 1)] = byteSequenceingBWT[endIndex];
@@ -88,7 +111,8 @@ internal class BWT
             {
                 return 1;
             }
-            else
+
+            if (byteSequence[firstIndex] < byteSequence[secondIndex])
             {
                 return -1;
             }

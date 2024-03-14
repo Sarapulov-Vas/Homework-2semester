@@ -2,7 +2,7 @@
 {
     private static void Main(string[] args)
     {
-        LZW.Compression("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.txt");
-        LZW.Decompression("/home/sarapulov-vasilii/work/Homework-2semester/LZW/test.txt.zipped");
+        LZW.Compression("/home/sarapulov-vasilii/work/Homework-2semester/BubbleSort/bin/Debug/net8.0/BubbleSort", false);
+        LZW.Decompression("/home/sarapulov-vasilii/work/Homework-2semester/BubbleSort/bin/Debug/net8.0/BubbleSort.zipped");
     }
 }

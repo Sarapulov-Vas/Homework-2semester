@@ -33,12 +33,15 @@
                         Console.WriteLine("Wrong input!");
                         return;
                     }
+
+                    Console.WriteLine("File successfully compressed.");
                 }
                 else if (args[1] == "-u")
                 {
                     if (string.Compare(args[0][^7..], ".zipped") == 0)
                     {
                         LZW.Decompression(args[0]);
+                        Console.WriteLine("The file has been successfully unzipped.");
                     }
                     else
                     {

@@ -12,6 +12,10 @@ internal class LZW
     public static void Compression(string path, bool BWT = false)
     {
         var originalText = File.ReadAllBytes(path);
+        if (originalText.Length == 0)
+        {
+            throw new Exception("Empty file cannot be compressed!");
+        }
         var compressionFile = new FileStream(path + ".zipped", FileMode.Create);
         var dictionary = new Trie();
         var entryPhrase = new List<byte>();

@@ -86,13 +86,13 @@ internal class Trie
             return false;
         }
 
-        // this.RemoveElement(element, this.root);
         for (int i = 0; i < element.Length; ++i)
         {
             TrieNode nextNode = currentNode.NextNode[element[i]];
             --currentNode.WordCount;
             if (currentNode.WordCount == 0)
             {
+                --Size;
                 currentNode.NextNode.Remove(element[i]);
             }
 

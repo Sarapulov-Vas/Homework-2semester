@@ -1,6 +1,7 @@
-﻿var a = new MultiplicationOperator(new NumberOperand(1), new NumberOperand(2));
-var b = new DivisionOperator(new NumberOperand(3), new NumberOperand(4));
-var c = new SubtractionOperator(new NumberOperand(5), b);
-var root = new AdditionOperator(a, c);
-
-root.Print();
+﻿internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var ParseTree = new ParseTree("/home/sarapulov-vasilii/work/Homework-2semester/parseTree/parseTree/test.txt");
+    }
+}

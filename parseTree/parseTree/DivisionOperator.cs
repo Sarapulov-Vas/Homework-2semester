@@ -3,6 +3,11 @@
 /// </summary>
 internal class DivisionOperator : Operator
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DivisionOperator"/> class.
+    /// </summary>
+    /// <param name="leftOperand">Reference to left operand.</param>
+    /// <param name="rightOperand">Reference to right operand.</param>
     public DivisionOperator(Node leftOperand, Node rightOperand)
         : base(leftOperand, rightOperand)
     {
@@ -23,6 +28,7 @@ internal class DivisionOperator : Operator
         return Value;
     }
 
+    /// <inheritdoc/>
     public override void Print()
     {
         Console.Write("(/ ");

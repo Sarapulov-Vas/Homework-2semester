@@ -3,6 +3,11 @@
 /// </summary>
 internal class AdditionOperator : Operator
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AdditionOperator"/> class.
+    /// </summary>
+    /// <param name="leftOperand">Reference to left operand.</param>
+    /// <param name="rightOperand">Reference to right operand.</param>
     public AdditionOperator(Node leftOperand, Node rightOperand)
         : base(leftOperand, rightOperand)
     {
@@ -18,6 +23,7 @@ internal class AdditionOperator : Operator
         return Value;
     }
 
+    /// <inheritdoc/>
     public override void Print()
     {
         Console.Write("(+ ");

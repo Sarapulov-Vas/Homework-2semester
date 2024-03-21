@@ -15,14 +15,14 @@ internal abstract class Operator : Node
     }
 
     /// <summary>
-    /// Gets or sets left operand reference.
+    /// Gets left operand reference.
     /// </summary>s
-    public Node LeftOperand { get; set; }
+    public Node LeftOperand { get; private set; }
 
     /// <summary>
-    /// Gets or sets right operand reference.
+    /// Gets right operand reference.
     /// </summary>
-    public Node RightOperand { get; set; }
+    public Node RightOperand { get; private set; }
 
     /// <summary>
     /// Method for calculating the value of a vertex.

@@ -80,12 +80,26 @@ internal class Trie
     /// <returns>Whether the element has been removed.</returns>
     public bool Remove(string element)
     {
+        TrieNode currentNode = root;
         if (!this.Contains(element))
         {
             return false;
         }
 
-        this.RemoveElement(element, this.root);
+        // this.RemoveElement(element, this.root);
+        for (int i = 0; i < element.Length; ++i)
+        {
+            TrieNode nextNode = currentNode.NextNode[element[i]];
+            --currentNode.WordCount;
+            if (currentNode.WordCount == 0)
+            {
+                currentNode.NextNode.Remove(element[i]);
+            }
+
+            currentNode = nextNode;
+        }
+
+        currentNode.IsTerminal = false;
         return true;
     }
 
@@ -111,43 +125,6 @@ internal class Trie
         }
 
         return currentNode.WordCount;
-    }
-
-    /// <summary>
-    /// A recursive method for removing an element.
-    /// </summary>
-    /// <param name="element">Removal Element.</param>
-    /// <param name="currentNode">Pointer to the current trie element.</param>
-    /// <returns>Whether an item can be deleted.</returns>
-    private bool RemoveElement(string element, TrieNode currentNode)
-    {
-        if (element.Length > 0)
-        {
-            --currentNode.WordCount;
-            if (this.RemoveElement(element[1..], currentNode.NextNode[element[0]]))
-            {
-                currentNode.NextNode.Remove(element[0]);
-                if (currentNode.NextNode.Count == 0)
-                {
-                    --this.Size;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        else
-        {
-            currentNode.IsTerminal = false;
-            --currentNode.WordCount;
-            if (currentNode.NextNode.Count == 0)
-            {
-                --this.Size;
-                return true;
-            }
-
-            return false;
-        }
     }
 
     /// <summary>

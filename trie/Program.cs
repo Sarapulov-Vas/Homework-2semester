@@ -8,11 +8,11 @@ internal class Program
         var trie = new Trie();
         if (Test.StartTest())
         {
-            Console.WriteLine("Tests complit.");
+            Console.WriteLine("Tests complited.");
         }
         else
         {
-            Console.WriteLine("test failed!");
+            Console.WriteLine("Test failed!");
         }
     }
 }

@@ -16,6 +16,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Build
+        shell: cmd
         run: For /R %%I in (*.sln) do dotnet build %%I
       - name: Run tests
+        shell: cmd
         run: For /R %%I in (*.sln) do dotnet test %%I

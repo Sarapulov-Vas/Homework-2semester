@@ -2,6 +2,10 @@
 {
     private static void Main(string[] args)
     {
-        var ParseTree = new ParseTree("/home/sarapulov-vasilii/work/Homework-2semester/parseTree/parseTree/test.txt");
+        Console.Write("Input path of parse tree file: ");
+        string path = Console.ReadLine();
+        var ParseTree = new ParseTree(path);
+        ParseTree.PrintParseTree();
+        ParseTree.Calculate();
     }
 }

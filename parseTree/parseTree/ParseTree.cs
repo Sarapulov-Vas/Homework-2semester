@@ -1,13 +1,53 @@
 using System.Text;
+using System.Xml.Serialization;
 
 internal class ParseTree
 {
     private Node root;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParseTree"/> class.
+    /// </summary>
+    /// <param name="path">Path to the parse tree file.</param>
     public ParseTree(string path)
     {
         string expression = File.ReadAllText(path);
         root = CreateParseTree(expression).Item1;
+    }
+
+    /// <summary>
+    /// Parsing tree output.
+    /// </summary>
+    public void PrintParseTree()
+    {
+        root.Print();
+        Console.WriteLine();
+    }
+
+    /// <summary>
+    /// Calculating an expression using the parse tree.
+    /// </summary>
+    /// <returns>Calculation result.</returns>
+    public int Calculate()
+    {
+        TreeTraversal((Operator)root);
+        Console.WriteLine(root.Value);
+        return root.Value;
+    }
+
+    private static void TreeTraversal(Operator currentNode)
+    {
+        if (currentNode.LeftOperand.GetType() != typeof(NumberOperand))
+        {
+            TreeTraversal((Operator)currentNode.LeftOperand);
+        }
+
+        if (currentNode.RightOperand.GetType() != typeof(NumberOperand))
+        {
+            TreeTraversal((Operator)currentNode.RightOperand);
+        }
+
+        currentNode.Calculate();
     }
 
     private (Node, int) CreateParseTree(string expression)
@@ -80,18 +120,25 @@ internal class ParseTree
                 }
             }
 
-            switch (expression[1])
+            if (expression[i] == ')')
             {
-                case '+':
-                    return (new AdditionOperator(leftOperand, rightOperand), i + 1);
-                case '-':
-                    return (new SubtractionOperator(leftOperand, rightOperand), i + 1);
-                case '*':
-                    return (new MultiplicationOperator(leftOperand, rightOperand), i + 1);
-                case '/':
-                    return (new DivisionOperator(leftOperand, rightOperand), i + 1);
-                default:
-                    throw new IncorrectInputException("Unsupported Operation.");
+                switch (expression[1])
+                {
+                    case '+':
+                        return (new AdditionOperator(leftOperand, rightOperand), i + 1);
+                    case '-':
+                        return (new SubtractionOperator(leftOperand, rightOperand), i + 1);
+                    case '*':
+                        return (new MultiplicationOperator(leftOperand, rightOperand), i + 1);
+                    case '/':
+                        return (new DivisionOperator(leftOperand, rightOperand), i + 1);
+                    default:
+                        throw new IncorrectInputException("Unsupported Operation.");
+                }
+            }
+            else
+            {
+                throw new IncorrectInputException("Incorrect parse tree.");
             }
         }
         else

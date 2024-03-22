@@ -1,4 +1,4 @@
-class IncorrectOperandException : Exception
+public class IncorrectOperandException : Exception
 {
     public IncorrectOperandException()
     {

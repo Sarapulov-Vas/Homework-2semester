@@ -1,7 +1,6 @@
 using System.Text;
-using System.Xml.Serialization;
 
-internal class ParseTree
+public class ParseTree
 {
     private Node root;
 
@@ -31,7 +30,6 @@ internal class ParseTree
     public int Calculate()
     {
         TreeTraversal((Operator)root);
-        Console.WriteLine(root.Value);
         return root.Value;
     }
 
@@ -52,6 +50,10 @@ internal class ParseTree
 
     private (Node, int) CreateParseTree(string expression)
     {
+        if (expression.Length < 8)
+        {
+            throw new IncorrectInputException("Incorrect parse tree.");
+        }
         if (expression[0] == '(' && expression[2] == ' ' &&
             (expression[1] == '+' || expression[1] == '-' || expression[1] == '*' || expression[1] == '/'))
         {
@@ -120,6 +122,10 @@ internal class ParseTree
                 }
             }
 
+            if (expression.Length <= i)
+            {
+                throw new IncorrectInputException("Incorrect parse tree.");
+            }
             if (expression[i] == ')')
             {
                 switch (expression[1])

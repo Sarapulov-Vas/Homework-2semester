@@ -6,6 +6,6 @@
         string path = Console.ReadLine();
         var ParseTree = new ParseTree(path);
         ParseTree.PrintParseTree();
-        ParseTree.Calculate();
+        Console.WriteLine(ParseTree.Calculate());
     }
 }

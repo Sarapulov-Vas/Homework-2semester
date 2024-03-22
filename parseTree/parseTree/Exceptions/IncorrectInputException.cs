@@ -1,4 +1,4 @@
-class IncorrectInputException : Exception
+public class IncorrectInputException : Exception
 {
     public IncorrectInputException()
     {

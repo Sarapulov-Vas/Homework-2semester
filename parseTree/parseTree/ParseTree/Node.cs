@@ -11,5 +11,6 @@ internal abstract class Node
     /// <summary>
     /// Value output.
     /// </summary>
-    public abstract void Print();
+    /// <returns>Output expression.</returns>
+    public abstract string Print();
 }

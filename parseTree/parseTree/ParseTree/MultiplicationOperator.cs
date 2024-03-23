@@ -24,12 +24,14 @@ internal class MultiplicationOperator : Operator
     }
 
     /// <inheritdoc/>
-    public override void Print()
+    public override string Print()
     {
         Console.Write("(* ");
-        this.LeftOperand.Print();
+        var leftexpression = this.LeftOperand.Print();
         Console.Write(" ");
-        this.RightOperand.Print();
+        var rightexpression = this.RightOperand.Print();
         Console.Write(")");
+        var printexpression = "(* " + leftexpression + " " + rightexpression + ")";
+        return printexpression;
     }
 }

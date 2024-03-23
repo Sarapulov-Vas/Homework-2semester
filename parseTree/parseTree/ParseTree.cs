@@ -20,10 +20,12 @@ public class ParseTree
     /// <summary>
     /// Parsing tree output.
     /// </summary>
-    public void PrintParseTree()
+    /// <returns>Parsing Tree.</returns>
+    public string PrintParseTree()
     {
-        this.root.Print();
+        var parseTreeExpression = this.root.Print();
         Console.WriteLine();
+        return parseTreeExpression;
     }
 
     /// <summary>

@@ -9,6 +9,7 @@ public class Tests
     {
         var parseTree = new ParseTree(path);
         Assert.That(parseTree.Calculate(), Is.EqualTo(expectedResult));
+        Assert.That(File.ReadAllText(path), Is.EqualTo(parseTree.PrintParseTree())) ;
     }
 
     [Test]

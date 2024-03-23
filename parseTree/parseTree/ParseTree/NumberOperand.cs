@@ -15,8 +15,10 @@ internal class NumberOperand : Node
     /// <summary>
     /// Output the value of the operand.
     /// </summary>
-    public override void Print()
+    /// <returns>Output expression.</returns>
+    public override string Print()
     {
         Console.Write(this.Value);
+        return this.Value.ToString();
     }
 }

@@ -55,7 +55,7 @@ public class ArrayStack : IStack
     /// <summary>
     /// A method for increasing the size of an array.
     /// </summary>
-    private static void Resize()
+    private void Resize()
     {
         size += 10;
         Array.Resize(ref this.stack, size);

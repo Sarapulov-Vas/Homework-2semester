@@ -16,7 +16,7 @@ public class ArrayStack : IStack
     /// <summary>
     /// Stack length field.
     /// </summary>
-    private int length = 0;
+    private int length;
 
     /// <summary>
     /// Gets stack length property.
@@ -55,7 +55,7 @@ public class ArrayStack : IStack
     /// <summary>
     /// A method for increasing the size of an array.
     /// </summary>
-    private void Resize()
+    private static void Resize()
     {
         size += 10;
         Array.Resize(ref this.stack, size);

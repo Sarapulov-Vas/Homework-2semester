@@ -1,7 +1,7 @@
 /// <summary>
 /// Main class.
 /// </summary>
-internal class Program
+internal static class Program
 {
     private static void Main()
     {

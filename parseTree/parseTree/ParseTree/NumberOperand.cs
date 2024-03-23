@@ -9,7 +9,7 @@ internal class NumberOperand : Node
     /// <param name="value">Operand value.</param>
     public NumberOperand(int value)
     {
-        Value = value;
+        this.Value = value;
     }
 
     /// <summary>
@@ -17,6 +17,6 @@ internal class NumberOperand : Node
     /// </summary>
     public override void Print()
     {
-        Console.Write(Value);
+        Console.Write(this.Value);
     }
 }

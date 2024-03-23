@@ -19,17 +19,17 @@ internal class MultiplicationOperator : Operator
     /// <returns>Result of operand multiplication.</returns>
     public override int Calculate()
     {
-        Value = LeftOperand.Value * RightOperand.Value;
-        return Value;
+        this.Value = this.LeftOperand.Value * this.RightOperand.Value;
+        return this.Value;
     }
 
     /// <inheritdoc/>
     public override void Print()
     {
         Console.Write("(* ");
-        LeftOperand.Print();
+        this.LeftOperand.Print();
         Console.Write(" ");
-        RightOperand.Print();
+        this.RightOperand.Print();
         Console.Write(")");
     }
 }

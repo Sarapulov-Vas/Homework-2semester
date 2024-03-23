@@ -8,10 +8,10 @@ internal abstract class Operator : Node
     /// </summary>
     /// <param name="leftOperand">Reference to left operand.</param>
     /// <param name="rightOperand">Reference to right operand.</param>
-    public Operator(Node leftOperand, Node rightOperand)
+    protected Operator(Node leftOperand, Node rightOperand)
     {
-        LeftOperand = leftOperand;
-        RightOperand = rightOperand;
+        this.LeftOperand = leftOperand;
+        this.RightOperand = rightOperand;
     }
 
     /// <summary>

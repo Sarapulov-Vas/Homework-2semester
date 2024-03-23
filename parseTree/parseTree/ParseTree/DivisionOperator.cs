@@ -19,22 +19,22 @@ internal class DivisionOperator : Operator
     /// <returns>Result of operand division.</returns>
     public override int Calculate()
     {
-        if (Math.Abs(RightOperand.Value) < 1e-8)
+        if (Math.Abs(this.RightOperand.Value) < 1e-8)
         {
             throw new DivideByZeroException();
         }
 
-        Value = LeftOperand.Value / RightOperand.Value;
-        return Value;
+        this.Value = this.LeftOperand.Value / this.RightOperand.Value;
+        return this.Value;
     }
 
     /// <inheritdoc/>
     public override void Print()
     {
         Console.Write("(/ ");
-        LeftOperand.Print();
+        this.LeftOperand.Print();
         Console.Write(" ");
-        RightOperand.Print();
+        this.RightOperand.Print();
         Console.Write(")");
     }
 }

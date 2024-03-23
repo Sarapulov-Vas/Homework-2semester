@@ -1,8 +1,11 @@
 using System.Text;
 
+/// <summary>
+/// A class for creating and calculation a parse tree.
+/// </summary>
 public class ParseTree
 {
-    private Node root;
+    private readonly Node root;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParseTree"/> class.
@@ -11,7 +14,7 @@ public class ParseTree
     public ParseTree(string path)
     {
         string expression = File.ReadAllText(path);
-        root = CreateParseTree(expression).Item1;
+        this.root = this.CreateParseTree(expression).Item1;
     }
 
     /// <summary>
@@ -19,7 +22,7 @@ public class ParseTree
     /// </summary>
     public void PrintParseTree()
     {
-        root.Print();
+        this.root.Print();
         Console.WriteLine();
     }
 
@@ -29,8 +32,8 @@ public class ParseTree
     /// <returns>Calculation result.</returns>
     public int Calculate()
     {
-        TreeTraversal((Operator)root);
-        return root.Value;
+        TreeTraversal((Operator)this.root);
+        return this.root.Value;
     }
 
     private static void TreeTraversal(Operator currentNode)
@@ -54,6 +57,7 @@ public class ParseTree
         {
             throw new IncorrectInputException("Incorrect parse tree.");
         }
+
         if (expression[0] == '(' && expression[2] == ' ' &&
             (expression[1] == '+' || expression[1] == '-' || expression[1] == '*' || expression[1] == '/'))
         {
@@ -62,7 +66,7 @@ public class ParseTree
             if (expression[i] == '(')
             {
                 int j = 0;
-                (leftOperand, j) = CreateParseTree(expression[i..]);
+                (leftOperand, j) = this.CreateParseTree(expression[i..]);
                 i += j;
             }
             else
@@ -94,7 +98,7 @@ public class ParseTree
             if (expression[i] == '(')
             {
                 int j = 0;
-                (rightOperand, j) = CreateParseTree(expression[i..]);
+                (rightOperand, j) = this.CreateParseTree(expression[i..]);
                 i += j;
             }
             else
@@ -126,6 +130,7 @@ public class ParseTree
             {
                 throw new IncorrectInputException("Incorrect parse tree.");
             }
+
             if (expression[i] == ')')
             {
                 switch (expression[1])

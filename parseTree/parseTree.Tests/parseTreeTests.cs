@@ -2,11 +2,6 @@ namespace parseTree.Tests;
 
 public class Tests
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
-
     [TestCase("../../../TestFiles/TestCorrect_1.txt", 31)]
     [TestCase("../../../TestFiles/TestCorrect_2.txt", 50)]
     [TestCase("../../../TestFiles/TestCorrect_3.txt", -75)]

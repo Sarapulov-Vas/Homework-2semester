@@ -30,4 +30,4 @@ jobs:
         - name: Build
           run: For /R %%I in (*.sln) do dotnet build %%I
         - name: Run tests
-          run: For /R %%I in (*.sln) do dotnet test %%I
+          run: For /R %%I in (*.sln) do dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover %%I

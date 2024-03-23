@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using UniqueList;
 public class Tests
 {
-    public List list;
+    private List list;
     [SetUp]
     public void Init()
     {

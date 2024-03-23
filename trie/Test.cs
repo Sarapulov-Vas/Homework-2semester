@@ -10,7 +10,7 @@ internal static class Test
     public static bool StartTest()
     {
         bool result = true;
-        if (TestAdd(["ab", "abcd", "df", "", "ab"], [true, true, true, true, false], 6))
+        if (TestAdd(["ab", "abcd", "df", string.Empty, "ab"], [true, true, true, true, false], 6))
         {
             Console.WriteLine("Addition test passed");
         }
@@ -20,7 +20,7 @@ internal static class Test
             result = false;
         }
 
-        if (TestContains(["ab", "abcd", "df", "", "abef"], ["df", "abc", "", "ab", "abe", "dfe"], [true, false, true, true, false, false]))
+        if (TestContains(["ab", "abcd", "df", string.Empty, "abef"], ["df", "abc", string.Empty, "ab", "abe", "dfe"], [true, false, true, true, false, false]))
         {
             Console.WriteLine("Contains test passed");
         }
@@ -30,7 +30,7 @@ internal static class Test
             result = false;
         }
 
-        if (TestRemove(["ab", "abcd", "df", "", "abef", "abcf", "abc"], ["ab", "", "abc"], [false, true, true, false, true, true, false], 9))
+        if (TestRemove(["ab", "abcd", "df", string.Empty, "abef", "abcf", "abc"], ["ab", string.Empty, "abc"], [false, true, true, false, true, true, false], 9))
         {
             Console.WriteLine("Remove test passed");
         }
@@ -40,7 +40,7 @@ internal static class Test
             result = false;
         }
 
-        if (TestHowManyStartsWithPrefix(["ab", "abcd", "df", "dfabc", "acd", "abcf", "abc"], ["ab", "dfa", ""], [4, 1, 7]))
+        if (TestHowManyStartsWithPrefix(["ab", "abcd", "df", "dfabc", "acd", "abcf", "abc"], ["ab", "dfa", string.Empty], [4, 1, 7]))
         {
             Console.WriteLine("HowManyStartsWithPrefix test passed");
         }
@@ -90,7 +90,7 @@ internal static class Test
     /// <returns>Result of test.</returns>
     private static bool TestContains(string[] inputElements, string[] findElements, bool[] expectedOut)
     {
-        Trie testTrie = new Trie();
+        var testTrie = new Trie();
         foreach (var element in inputElements)
         {
             testTrie.Add(element);

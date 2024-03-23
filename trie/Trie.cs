@@ -6,7 +6,7 @@ internal class Trie
     /// <summary>
     /// Root trie.
     /// </summary>
-    private TrieNode root;
+    private readonly TrieNode root;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Trie"/> class.
@@ -80,7 +80,7 @@ internal class Trie
     /// <returns>Whether the element has been removed.</returns>
     public bool Remove(string element)
     {
-        TrieNode currentNode = root;
+        TrieNode currentNode = this.root;
         if (!this.Contains(element))
         {
             return false;
@@ -92,7 +92,7 @@ internal class Trie
             --currentNode.WordCount;
             if (currentNode.WordCount == 0)
             {
-                --Size;
+                --this.Size;
                 currentNode.NextNode.Remove(element[i]);
             }
 

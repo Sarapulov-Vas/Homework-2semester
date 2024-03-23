@@ -2,7 +2,7 @@ namespace stackCalculator.Tests;
 
 public class StackTests
 {
-    double epsilon = 1e-10;
+    readonly double epsilon = 1e-10;
     private static IEnumerable<TestCaseData> Stack()
     {
         yield return new TestCaseData(new ListStack());

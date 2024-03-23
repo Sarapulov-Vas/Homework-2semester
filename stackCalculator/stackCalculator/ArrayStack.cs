@@ -3,15 +3,15 @@
 /// </summary>
 public class ArrayStack : IStack
 {
-        /// <summary>
+    /// <summary>
     /// Current size of stack.
     /// </summary>
-    private static int size = 10;
+    private int size = 10;
 
     /// <summary>
     /// Array implementing the stack.
     /// </summary>
-    private double[] stack = new double[size];
+    private double[] stack = new double[10];
 
     /// <summary>
     /// Stack length field.
@@ -32,7 +32,7 @@ public class ArrayStack : IStack
     /// <param name="value">Adding a value to the stack.</param>
     public void Push(double value)
     {
-        if (this.length + 1 == size)
+        if (this.length + 1 == this.size)
         {
             this.Resize();
         }
@@ -57,7 +57,7 @@ public class ArrayStack : IStack
     /// </summary>
     private void Resize()
     {
-        size += 10;
-        Array.Resize(ref this.stack, size);
+        this.size += 10;
+        Array.Resize(ref this.stack, this.size);
     }
 }

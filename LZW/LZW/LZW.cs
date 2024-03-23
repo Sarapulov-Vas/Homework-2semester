@@ -4,10 +4,10 @@ using System.Text;
 /// <summary>
 /// Class realizing file compression and decompression by LZW algorithm.
 /// </summary>
-public class LZW
+public static class LZW
 {
-    private static byte currentByte = 0;
-    private static int counterBits = 0;
+    private static byte currentByte;
+    private static int counterBits;
 
     /// <summary>
     /// Compression method.
@@ -36,6 +36,7 @@ public class LZW
         {
             BWTText.DirectConversion(originalText);
         }
+
         for (int i = 0; i < 256; ++i)
         {
             dictionary.Add([(byte)i]);

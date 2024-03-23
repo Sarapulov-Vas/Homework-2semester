@@ -55,13 +55,13 @@ internal class BWT
     /// <returns>Byte after application of BWT.</returns>
     public byte GetElement(byte[] byteSequence, int index)
     {
-        if (suffixArray[index] == 0)
+        if (this.suffixArray[index] == 0)
         {
             return byteSequence[^1];
         }
         else
         {
-            return byteSequence[suffixArray[index] - 1];
+            return byteSequence[this.suffixArray[index] - 1];
         }
     }
 
@@ -72,24 +72,24 @@ internal class BWT
     /// <returns>The converted byteSequenceing and the position of the end of the byteSequence.</returns>
     public int DirectConversion(byte[] byteSequence)
     {
-        suffixArray = new int[byteSequence.Length];
+        this.suffixArray = new int[byteSequence.Length];
         var resultbyteSequence = new byte[byteSequence.Length];
         for (int i = 0; i < byteSequence.Length; ++i)
         {
-            suffixArray[i] = i;
+            this.suffixArray[i] = i;
         }
 
-        Array.Sort(suffixArray, (x, y) => Compare(byteSequence, x, y));
-        int endIndex = Array.IndexOf(suffixArray, 0);
+        Array.Sort(this.suffixArray, (x, y) => Compare(byteSequence, x, y));
+        int endIndex = Array.IndexOf(this.suffixArray, 0);
         for (int i = 0; i < byteSequence.Length; ++i)
         {
-            if (suffixArray[i] == 0)
+            if (this.suffixArray[i] == 0)
             {
                 resultbyteSequence[i] = byteSequence[^1];
             }
             else
             {
-                resultbyteSequence[i] = byteSequence[suffixArray[i] - 1];
+                resultbyteSequence[i] = byteSequence[this.suffixArray[i] - 1];
             }
         }
 

@@ -6,12 +6,12 @@ internal class Trie
     /// <summary>
     /// Root trie.
     /// </summary>
-    private TrieNode root;
+    private readonly TrieNode root;
 
     /// <summary>
     /// Counter of elemens.
     /// </summary>
-    private int currentNumber = 0;
+    private int currentNumber;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Trie"/> class.

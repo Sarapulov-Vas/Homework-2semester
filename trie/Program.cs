@@ -1,11 +1,10 @@
 ﻿/// <summary>
 /// Main class.
 /// </summary>
-internal class Program
+internal static class Program
 {
     private static void Main()
     {
-        var trie = new Trie();
         if (Test.StartTest())
         {
             Console.WriteLine("Tests complited.");

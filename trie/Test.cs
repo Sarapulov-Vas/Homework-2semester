@@ -1,7 +1,7 @@
 /// <summary>
 /// Class for tests.
 /// </summary>
-internal class Test
+internal static class Test
 {
     /// <summary>
     /// Test run method.
@@ -10,44 +10,44 @@ internal class Test
     public static bool StartTest()
     {
         bool result = true;
-        if (!TestAdd(["ab", "abcd", "df", "", "ab"], [true, true, true, true, false], 6))
+        if (TestAdd(["ab", "abcd", "df", "", "ab"], [true, true, true, true, false], 6))
+        {
+            Console.WriteLine("Addition test passed");
+        }
+        else
         {
             Console.WriteLine("Addition test fails");
             result = false;
         }
-        else
-        {
-            Console.WriteLine("Addition test passed");
-        }
 
-        if (!TestContains(["ab", "abcd", "df", "", "abef"], ["df", "abc", "", "ab", "abe", "dfe"], [true, false, true, true, false, false]))
+        if (TestContains(["ab", "abcd", "df", "", "abef"], ["df", "abc", "", "ab", "abe", "dfe"], [true, false, true, true, false, false]))
+        {
+            Console.WriteLine("Contains test passed");
+        }
+        else
         {
             Console.WriteLine("Contains test fails");
             result = false;
         }
-        else
-        {
-            Console.WriteLine("Contains test passed");
-        }
 
-        if (!TestRemove(["ab", "abcd", "df", "", "abef", "abcf", "abc"], ["ab", "", "abc"], [false, true, true, false, true, true, false], 9))
+        if (TestRemove(["ab", "abcd", "df", "", "abef", "abcf", "abc"], ["ab", "", "abc"], [false, true, true, false, true, true, false], 9))
+        {
+            Console.WriteLine("Remove test passed");
+        }
+        else
         {
             Console.WriteLine("Remove test fails");
             result = false;
         }
-        else
-        {
-            Console.WriteLine("Remove test passed");
-        }
 
-        if (!TestHowManyStartsWithPrefix(["ab", "abcd", "df", "dfabc", "acd", "abcf", "abc"], ["ab", "dfa", ""], [4, 1, 7]))
+        if (TestHowManyStartsWithPrefix(["ab", "abcd", "df", "dfabc", "acd", "abcf", "abc"], ["ab", "dfa", ""], [4, 1, 7]))
+        {
+            Console.WriteLine("HowManyStartsWithPrefix test passed");
+        }
+        else
         {
             Console.WriteLine("HowManyStartsWithPrefix test fails");
             result = false;
-        }
-        else
-        {
-            Console.WriteLine("HowManyStartsWithPrefix test passed");
         }
 
         return result;

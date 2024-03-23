@@ -1,7 +1,9 @@
+namespace UniqueList;
+
 /// <summary>
 /// A class that implements a linked list.
 /// </summary>
-internal class List
+public class List
 {
     /// <summary>
     /// Pointer to the beginning of the list.
@@ -68,7 +70,6 @@ internal class List
     /// <param name="newValue">The new value of the element.</param>
     public void ChangeElement(int index, int newValue)
     {
-        this.IndexIsCorrect(index);
         this.GetElementByIndex(index).Value = newValue;
     }
 

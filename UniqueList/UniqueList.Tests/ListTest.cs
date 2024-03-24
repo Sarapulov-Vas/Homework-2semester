@@ -1,6 +1,5 @@
 namespace UniqueList.Tests;
 
-using System.Security.Cryptography.X509Certificates;
 using UniqueList;
 public class Tests
 {

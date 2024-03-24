@@ -8,7 +8,7 @@ public class List
     /// <summary>
     /// Pointer to the beginning of the list.
     /// </summary>
-    private Node? head = null;
+    private protected Node? head = null;
 
     /// <summary>
     /// Gets number of items in the list.
@@ -19,7 +19,7 @@ public class List
     /// A method for adding an item to a linked list.
     /// </summary>
     /// <param name="value">The value to be added to the list.</param>
-    public void Add(int value)
+    public virtual void Add(int value)
     {
         ++this.Count;
         var tmp = new Node(value, this.head);
@@ -68,7 +68,7 @@ public class List
     /// </summary>
     /// <param name="index">The index of the element to be modified.</param>
     /// <param name="newValue">The new value of the element.</param>
-    public void ChangeElement(int index, int newValue)
+    public virtual void ChangeElement(int index, int newValue)
     {
         this.GetElementByIndex(index).Value = newValue;
     }

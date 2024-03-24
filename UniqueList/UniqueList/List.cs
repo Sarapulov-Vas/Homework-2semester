@@ -8,7 +8,7 @@ public class List
     /// <summary>
     /// Pointer to the beginning of the list.
     /// </summary>
-    private protected Node? head = null;
+    private protected Node? head;
 
     /// <summary>
     /// Gets number of items in the list.

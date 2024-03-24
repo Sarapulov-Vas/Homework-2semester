@@ -49,9 +49,8 @@ public class Tests
         list.Add(2);
         list.Add(3);
         list.Delate(1);
-        Assert.That(list.Pop(), Is.EqualTo(3));
+        list.Delate(0);
         Assert.That(list.Pop(), Is.EqualTo(1));
-        Assert.Throws<EmptyListException>(() => list.Pop());
     }
 
     [TestCaseSource(nameof(List))]

@@ -27,7 +27,12 @@ public class UniqueList : List
         base.ChangeElement(index, newValue);
     }
 
-    private bool Contain(int value)
+    /// <summary>
+    /// A method for checking an item in a list.
+    /// </summary>
+    /// <param name="value">Validation value.</param>
+    /// <returns>Is there an element with this value in the list.</returns>
+    public bool Contain(int value)
     {
         if (this.head == null)
         {
@@ -41,6 +46,8 @@ public class UniqueList : List
             {
                 return true;
             }
+
+            current = current.Next;
         }
 
         return false;

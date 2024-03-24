@@ -51,14 +51,13 @@ public class List
     public void Delate(int index)
     {
         this.IndexIsCorrect(index);
-
-        --this.Count;
         if (index == 0)
         {
             this.Pop();
             return;
         }
 
+        --this.Count;
         var prev = this.GetElementByIndex(index - 1);
         prev.Next = prev.Next.Next;
     }

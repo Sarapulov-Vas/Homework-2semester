@@ -19,7 +19,7 @@ internal class DivisionOperator : Operator
     /// <returns>Result of operand division.</returns>
     public override int Calculate()
     {
-        if (Math.Abs(this.RightOperand.Value) < 1e-8)
+        if (this.RightOperand.Value == 0)
         {
             throw new DivideByZeroException();
         }

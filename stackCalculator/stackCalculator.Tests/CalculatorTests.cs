@@ -6,8 +6,6 @@ public class CalculateorTests
 {
     private readonly double epsilon = 1e-10;
 
-    
-
     [TestCaseSource(typeof(TestData), nameof(TestData.Calculator))]
     public void TestCorrectInput (StackCalculator calculator)
     {
@@ -44,12 +42,10 @@ public class CalculateorTests
         Assert.That(Math.Abs(calculator.Calculate(inputString) - result) < epsilon);
     }
 
-   
-
-    public class TestData
+    public static class TestData
     {
         private static readonly List<StackCalculator> ListOfCalculators = 
-            new List<StackCalculator>() { new StackCalculator(new ListStack()), new StackCalculator(new ArrayStack()) };
+            [new StackCalculator(new ListStack()), new StackCalculator(new ArrayStack())];
 
         public static IEnumerable<TestCaseData> Calculator()
         {

@@ -3,7 +3,7 @@
 /// </summary>
 public class Net
 {
-    public readonly Dictionary<int, List<(int vertex, int weight)>> graph = new Dictionary<int, List<(int vetrex, int weight)>>();
+    private readonly Dictionary<int, List<(int vertex, int weight)>> graph = new Dictionary<int, List<(int vetrex, int weight)>>();
 
     /// <summary>
     /// Gets the number of vertices in a graph.

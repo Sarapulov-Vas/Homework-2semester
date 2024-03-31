@@ -1,6 +1,5 @@
 using System.Text;
 
-
 /// <summary>
 /// A class that implements the prim algorithm.
 /// </summary>
@@ -9,11 +8,12 @@ public static class Prima
     /// <summary>
     /// A method to run the prima algorithm.
     /// </summary>
-    /// <param name="currentNet">Initial graph.</param>
-    /// <returns>Graph after applying the prim algorithm.</returns>
-    public static void Start(string NetPath, string resultPath)
+    /// <param name="netPath">The path to the network topology file.</param>
+    /// <param name="resultPath">Path to the file where the result will be loaded.</param>
+    /// <exception cref="UnboundGraphException">Exception in the case of an unbound graph.</exception>
+    public static void Start(string netPath, string resultPath)
     {
-        var currentNet = ParseFile(NetPath);
+        var currentNet = ParseFile(netPath);
         var result = new Net();
         var queue = new BinaryHeap();
         foreach (var element in currentNet.GetListOfAdjacentVertices(1))
@@ -45,11 +45,22 @@ public static class Prima
         WriteResult(result, resultPath);
     }
 
-    private static Net ParseFile(string path)
+    /// <summary>
+    /// A method for reading a graph from a file.
+    /// </summary>
+    /// <param name="path">File Path.</param>
+    /// <returns>Graph.</returns>
+    /// <exception cref="IncorrectFileException">Exception for an invalid file.</exception>
+    public static Net ParseFile(string path)
     {
         var net = new Net();
-        var FileText = File.ReadAllLines(path);
-        foreach (var line in FileText)
+        var fileText = File.ReadAllLines(path);
+        if (fileText.Length == 0)
+        {
+            throw new IncorrectFileException();
+        }
+
+        foreach (var line in fileText)
         {
             var splitLine = line.Split(':');
             if (int.TryParse(splitLine[0], out int firstVertex) && splitLine.Length == 2)

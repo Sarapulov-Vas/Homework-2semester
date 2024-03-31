@@ -62,7 +62,7 @@ internal static class Test
     /// <returns>Result of test.</returns>
     private static bool TestAdd(string[] inputElements, bool[] expectedOut, int expectedCount)
     {
-        Trie testTrie = new Trie();
+        var testTrie = new Trie();
         for (int i = 0; i < inputElements.Length; ++i)
         {
             if (testTrie.Add(inputElements[i]) != expectedOut[i])
@@ -118,7 +118,7 @@ internal static class Test
     /// <returns>Result of test.</returns>
     private static bool TestRemove(string[] inputElements, string[] removeElements, bool[] expectedOut, int expectedCount)
     {
-        Trie testTrie = new Trie();
+        var testTrie = new Trie();
         foreach (var element in inputElements)
         {
             testTrie.Add(element);

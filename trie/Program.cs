@@ -7,7 +7,7 @@ internal static class Program
     {
         if (Test.StartTest())
         {
-            Console.WriteLine("Tests complited.");
+            Console.WriteLine("Tests completed.");
         }
         else
         {

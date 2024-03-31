@@ -1,3 +1,6 @@
+using System.Collections.Concurrent;
+
+
 /// <summary>
 /// A class that implements a priority queue.
 /// </summary>
@@ -53,5 +56,14 @@ internal class BinaryHeap
         }
 
         return max;
+    }
+
+    /// <summary>
+    /// A method of checking the heap for emptiness.
+    /// </summary>
+    /// <returns>Whether the heap is empty.</returns>
+    public bool IsEmpty()
+    {
+        return heap.Count == 0;
     }
 }

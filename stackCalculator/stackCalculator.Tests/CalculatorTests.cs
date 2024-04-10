@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-
 namespace stackCalculator.Tests;
 
 public class CalculateorTests

@@ -1,15 +1,15 @@
 ﻿using System.Text;
 
-namespace GUICalculator
+namespace Calculator
 {
     /// <summary>
     /// A class that implements a calculator.
     /// </summary>
-    internal class Calculator
+    public class Calculator
     {
         private double firstNumber;
         private double secondNumber;
-        private StringBuilder currentNumber = new ();
+        private StringBuilder currentNumber = new();
         private char? operation = null;
         private double epsilon = 1e-10;
 
@@ -18,30 +18,30 @@ namespace GUICalculator
         /// </summary>
         /// <param name="digit">Digit to add.</param>
         /// <returns>Current number.</returns>
-        public string AddDigit(int digit)
+        public double AddDigit(int digit)
         {
             currentNumber.Append(digit);
-            return currentNumber.ToString();
+            return double.Parse(currentNumber.ToString());
         }
 
         /// <summary>
         /// A method that adds a point to a number.
         /// </summary>
         /// <returns>Current number.</returns>
-        public string AddPoint()
+        public double AddPoint()
         {
-            currentNumber.Append('.');
-            return currentNumber.ToString();
+            currentNumber.Append(',');
+            return double.Parse(currentNumber.ToString());
         }
 
         /// <summary>
         /// A method that removes a digit from the end of a number.
         /// </summary>
         /// <returns>Current number.</returns>
-        public string BackSpace()
+        public double BackSpace()
         {
             currentNumber.Remove(currentNumber.Length - 1, 1);
-            return currentNumber.ToString();
+            return double.Parse(currentNumber.ToString());
         }
 
         /// <summary>
@@ -74,11 +74,13 @@ namespace GUICalculator
             {
                 this.operation = operation;
                 firstNumber = double.Parse(currentNumber.ToString());
+                currentNumber.Clear();
                 return firstNumber;
             }
             else
             {
                 secondNumber = double.Parse(currentNumber.ToString());
+                currentNumber.Clear();
                 firstNumber = Calculate(this.operation);
                 this.operation = operation;
                 return firstNumber;
@@ -94,14 +96,14 @@ namespace GUICalculator
             if (operation == null)
             {
                 firstNumber = double.Parse(currentNumber.ToString());
-                return firstNumber;
             }
             else
             {
                 secondNumber = double.Parse(currentNumber.ToString());
                 firstNumber = Calculate(operation);
-                return firstNumber;
             }
+            currentNumber.Clear();
+            return firstNumber;
         }
 
         private double Calculate(char? opeartion)
@@ -122,7 +124,7 @@ namespace GUICalculator
 
                     return firstNumber / secondNumber;
                 default:
-                    throw new ArgumentException();
+                    throw new ArgumentException("Unsupported operation.");
             }
         }
     }

@@ -62,14 +62,9 @@ public class Tests
     [Test]
     public void TestMultiplication()
     {
-        (int, int)[] expectedVector = [(1, 4), (4, 10)];
-        var vector = new SparseVector([(1, 2), (4, 5)]);
-        var result = SparseVector.Multiplication(vector, 2);
-        for (int i = 0; i < expectedVector.Length; i++)
-        {
-            Assert.That(result.Vector[i].number, Is.EqualTo(expectedVector[i].Item1));
-            Assert.That(result.Vector[i].value, Is.EqualTo(expectedVector[i].Item2));
-        }
-        Assert.That(result.Size, Is.EqualTo(5));
+        var vector1 = new SparseVector([(2, 3), (4, 5)]);
+        var vector2 = new SparseVector([(1, 2), (4, 5)]);
+        var result = SparseVector.Multiplication(vector1, vector2);
+        Assert.That(result, Is.EqualTo(25));
     }
 }

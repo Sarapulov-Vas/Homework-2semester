@@ -32,6 +32,10 @@ public class SparseVector
     /// </summary>
     public int Size { get; private set; }
 
+    /// <summary>
+    /// Method that return origin vector.
+    /// </summary>
+    /// <returns>Veector.</returns>
     public int[] GetOriginalVector()
     {
         var result = new List<int>();
@@ -48,6 +52,7 @@ public class SparseVector
                 result.Add(0);
             }
         }
+
         return result.ToArray();
     }
 
@@ -87,22 +92,42 @@ public class SparseVector
     /// Method realising vector multiplication.
     /// </summary>
     /// <param name="firstVector">First vector.</param>
-    /// <param name="scalar">Scalar.</param>
+    /// <param name="secondVector">Second vector.</param>
     /// <returns>Result of multiplication vectors.</returns>
-    public static SparseVector Multiplication(SparseVector firstVector, int scalar)
+    public static int Multiplication(SparseVector firstVector, SparseVector secondVector)
     {
-        if (CheckingVectorNull(firstVector))
+        if (CheckingVectorNull(firstVector) || CheckingVectorNull(secondVector))
         {
             throw new ArgumentException("Null vectors.");
         }
 
-        var resultVector = new List<(int number, int value)>();
-        foreach (var element in firstVector.Vector)
+        int result = 0;
+        int index1 = 0;
+        int index2 = 0;
+        for (int i = 0; i < firstVector.Size; ++i)
         {
-            resultVector.Add((element.number, element.value * scalar));
+            if (firstVector.Vector[index1].number == i && secondVector.Vector[index2].number == i)
+            {
+                result += firstVector.Vector[index1].value * secondVector.Vector[index2].value;
+                index1++;
+                index2++;
+                continue;
+            }
+
+            if (firstVector.Vector[index1].number == i)
+            {
+                index1++;
+                continue;
+            }
+
+            if (secondVector.Vector[index2].number == i)
+            {
+                index2++;
+                continue;
+            }
         }
 
-        return new SparseVector(resultVector.ToArray());
+        return result;
     }
 
     private static SparseVector MakeOperation(SparseVector firstVector, SparseVector secondVector, Func<int, int, int> func)
@@ -122,7 +147,7 @@ public class SparseVector
         int index2 = 0;
         for (int i = 0; i < firstVector.Size; ++i)
         {
-            if (firstVector.Vector[index1].number == i && firstVector.Vector[index2].number == i)
+            if (firstVector.Vector[index1].number == i && secondVector.Vector[index2].number == i)
             {
                 if (func(firstVector.Vector[index1].value, secondVector.Vector[index2].value) != 0)
                 {

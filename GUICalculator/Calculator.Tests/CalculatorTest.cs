@@ -94,7 +94,6 @@ namespace Calculator.Tests
         [TestCase("1.23", 1.2)]
         public void TestBackSpace(string testValue, double expectedResult)
         {
-            double num;
             var calculator = new Calculator();
             foreach (var digit in testValue)
             {

@@ -181,7 +181,6 @@ public static class LZW
             }
 
             prevCode = currCode;
-            currCode = 0;
             while (numberOfBits[currentNumberOfBits] == 0)
             {
                 currentNumberOfBits++;
@@ -228,7 +227,6 @@ public static class LZW
                 {
                     buffer = (byte)compressedFile.ReadByte();
                     value.Append((char)buffer);
-                    counterBytes = 0;
                 }
 
                 endOfText = int.Parse(value.ToString());

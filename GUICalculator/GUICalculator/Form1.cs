@@ -3,10 +3,10 @@ using Calculator;
 
 public partial class Form1 : Form
 {
-    private Calculator calculator = new();
+    private readonly Calculator calculator = new();
     private string expression;
     private string currentExpression = "0";
-    private bool displayResult = false;
+    private bool displayResult;
 
     public Form1()
     {
@@ -152,7 +152,7 @@ public partial class Form1 : Form
             displayResult = false;
             calculator.ClearAll();
             expression = string.Empty;
-            var currentExpression = calculator.AddDigit(digit);
+            currentExpression = calculator.AddDigit(digit);
             TextScale(currentExpression);
             RichTextBox1.Text = currentExpression;
         }
@@ -174,6 +174,8 @@ public partial class Form1 : Form
             case Calculator.Operations.Division:
                 expression = calculator.UseOperation(operation).ToString() + '/';
                 break;
+            default:
+                throw new ArgumentException();
         }
 
         currentExpression = expression + '0';

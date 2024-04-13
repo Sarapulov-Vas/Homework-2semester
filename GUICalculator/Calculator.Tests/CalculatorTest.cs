@@ -4,7 +4,7 @@ namespace Calculator.Tests
 {
     public class Tests
     {
-        private double epsilon = 1e-10;
+        private readonly double epsilon = 1e-10;
 
         [TestCaseSource(typeof(TestData), nameof(TestData.TestCasesOperations))]
         public void TestOperations(Calculator calculator, string inputExpression, double[] expectedResult)
@@ -104,9 +104,10 @@ namespace Calculator.Tests
                 }
                 else
                 {
-                    num = double.Parse(calculator.AddDigit(int.Parse(Convert.ToString(digit))));
+                    double.Parse(calculator.AddDigit(int.Parse(Convert.ToString(digit))));
                 }
             }
+
             Assert.That(Math.Abs(double.Parse(calculator.BackSpace()) - expectedResult) < epsilon);
         }
 

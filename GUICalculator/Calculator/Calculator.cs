@@ -11,9 +11,9 @@ namespace Calculator
         private double secondNumber;
         private StringBuilder currentNumber = new();
         private Operations operation;
-        private bool inputFirstNumber = false;
-        private double epsilon = 1e-10;
-        private bool usePoint = false;
+        private bool inputFirstNumber;
+        private readonly double epsilon = 1e-10;
+        private bool usePoint;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Calculator"/> class.

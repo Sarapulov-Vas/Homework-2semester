@@ -15,9 +15,38 @@ namespace Calculator
         private double epsilon = 1e-10;
         private bool usePoint = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Calculator"/> class.
+        /// </summary>
         public Calculator()
         {
             currentNumber.Append(0);
+        }
+
+        /// <summary>
+        /// Enumeration of operations.
+        /// </summary>
+        public enum Operations
+        {
+            /// <summary>
+            /// Addition operation.
+            /// </summary>
+            Addition,
+
+            /// <summary>
+            /// Subtraction operation.
+            /// </summary>
+            Subtraction,
+
+            /// <summary>
+            /// Multiplication operation.
+            /// </summary>
+            Multiplication,
+
+            /// <summary>
+            /// Division operation.
+            /// </summary>
+            Division,
         }
 
         /// <summary>
@@ -40,8 +69,10 @@ namespace Calculator
                         return currentNumber.ToString();
                     }
                 }
+
                 currentNumber.Append(digit);
             }
+
             return currentNumber.ToString();
         }
 
@@ -56,6 +87,7 @@ namespace Calculator
                 currentNumber.Append(',');
                 usePoint = true;
             }
+
             return currentNumber.ToString();
         }
 
@@ -69,16 +101,19 @@ namespace Calculator
             {
                 currentNumber.Remove(currentNumber.Length - 1, 1);
             }
+
             if (currentNumber.Length == 0)
             {
                 currentNumber.Append(0);
             }
+
             return currentNumber.ToString();
         }
 
         /// <summary>
         /// Method deleting the current number.
         /// </summary>
+        /// <returns>A string without a deleted number.</returns>
         public string DelateCurrentNumber()
         {
             currentNumber.Clear();
@@ -119,6 +154,7 @@ namespace Calculator
                 firstNumber = Calculate(this.operation);
                 this.operation = operation;
             }
+
             currentNumber.Append(0);
             usePoint = false;
             return firstNumber;
@@ -158,13 +194,6 @@ namespace Calculator
                 default:
                     throw new ArgumentException("Unsupported operation.");
             }
-        }
-        public enum Operations
-        {
-            Addition,
-            Subtraction,
-            Multiplication,
-            Division
         }
     }
 }

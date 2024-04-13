@@ -10,46 +10,80 @@ namespace Calculator
         private double firstNumber;
         private double secondNumber;
         private StringBuilder currentNumber = new();
-        private char? operation = null;
+        private Operations operation;
+        private bool inputFirstNumber = false;
         private double epsilon = 1e-10;
+        private bool usePoint = false;
+
+        public Calculator()
+        {
+            currentNumber.Append(0);
+        }
 
         /// <summary>
         /// Method adding a digit to a number.
         /// </summary>
         /// <param name="digit">Digit to add.</param>
         /// <returns>Current number.</returns>
-        public double AddDigit(int digit)
+        public string AddDigit(int digit)
         {
-            currentNumber.Append(digit);
-            return double.Parse(currentNumber.ToString());
+            if (currentNumber.Length <= 16)
+            {
+                if (currentNumber.ToString() == "0")
+                {
+                    if (digit != 0)
+                    {
+                        currentNumber.Clear();
+                    }
+                    else
+                    {
+                        return currentNumber.ToString();
+                    }
+                }
+                currentNumber.Append(digit);
+            }
+            return currentNumber.ToString();
         }
 
         /// <summary>
         /// A method that adds a point to a number.
         /// </summary>
         /// <returns>Current number.</returns>
-        public double AddPoint()
+        public string AddPoint()
         {
-            currentNumber.Append(',');
-            return double.Parse(currentNumber.ToString());
+            if (usePoint == false)
+            {
+                currentNumber.Append(',');
+                usePoint = true;
+            }
+            return currentNumber.ToString();
         }
 
         /// <summary>
         /// A method that removes a digit from the end of a number.
         /// </summary>
         /// <returns>Current number.</returns>
-        public double BackSpace()
+        public string BackSpace()
         {
-            currentNumber.Remove(currentNumber.Length - 1, 1);
-            return double.Parse(currentNumber.ToString());
+            if (currentNumber.Length > 0)
+            {
+                currentNumber.Remove(currentNumber.Length - 1, 1);
+            }
+            if (currentNumber.Length == 0)
+            {
+                currentNumber.Append(0);
+            }
+            return currentNumber.ToString();
         }
 
         /// <summary>
         /// Method deleting the current number.
         /// </summary>
-        public void DelateCurrentNumber()
+        public string DelateCurrentNumber()
         {
             currentNumber.Clear();
+            currentNumber.Append(0);
+            return currentNumber.ToString();
         }
 
         /// <summary>
@@ -59,8 +93,9 @@ namespace Calculator
         {
             firstNumber = 0;
             secondNumber = 0;
-            operation = null;
+            inputFirstNumber = false;
             currentNumber.Clear();
+            currentNumber.Append(0);
         }
 
         /// <summary>
@@ -68,14 +103,14 @@ namespace Calculator
         /// </summary>
         /// <param name="operation">Operation.</param>
         /// <returns>Calculation result.</returns>
-        public double UseOperation(char operation)
+        public double UseOperation(Operations operation)
         {
-            if (this.operation == null)
+            if (inputFirstNumber == false)
             {
                 this.operation = operation;
+                inputFirstNumber = true;
                 firstNumber = double.Parse(currentNumber.ToString());
                 currentNumber.Clear();
-                return firstNumber;
             }
             else
             {
@@ -83,8 +118,10 @@ namespace Calculator
                 currentNumber.Clear();
                 firstNumber = Calculate(this.operation);
                 this.operation = operation;
-                return firstNumber;
             }
+            currentNumber.Append(0);
+            usePoint = false;
+            return firstNumber;
         }
 
         /// <summary>
@@ -93,30 +130,25 @@ namespace Calculator
         /// <returns>Calculated result.</returns>
         public double GetResult()
         {
-            if (operation == null)
-            {
-                firstNumber = double.Parse(currentNumber.ToString());
-            }
-            else
-            {
-                secondNumber = double.Parse(currentNumber.ToString());
-                firstNumber = Calculate(operation);
-            }
-            currentNumber.Clear();
+            secondNumber = double.Parse(currentNumber.ToString());
+            firstNumber = Calculate(operation);
+            currentNumber = new (firstNumber.ToString());
+            inputFirstNumber = false;
+            usePoint = false;
             return firstNumber;
         }
 
-        private double Calculate(char? opeartion)
+        private double Calculate(Operations opeartion)
         {
             switch (opeartion)
             {
-                case '+':
+                case Operations.Addition:
                     return firstNumber + secondNumber;
-                case '-':
+                case Operations.Subtraction:
                     return firstNumber - secondNumber;
-                case '*':
+                case Operations.Multiplication:
                     return firstNumber * secondNumber;
-                case '/':
+                case Operations.Division:
                     if (Math.Abs(secondNumber) < epsilon)
                     {
                         throw new DivideByZeroException();
@@ -126,6 +158,13 @@ namespace Calculator
                 default:
                     throw new ArgumentException("Unsupported operation.");
             }
+        }
+        public enum Operations
+        {
+            Addition,
+            Subtraction,
+            Multiplication,
+            Division
         }
     }
 }

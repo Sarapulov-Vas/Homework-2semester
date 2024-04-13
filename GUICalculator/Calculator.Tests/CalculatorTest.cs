@@ -1,8 +1,11 @@
+using static Calculator.Calculator;
+
 namespace Calculator.Tests
 {
     public class Tests
     {
         private double epsilon = 1e-10;
+
         [TestCaseSource(typeof(TestData), nameof(TestData.TestCasesOperations))]
         public void TestOperations(Calculator calculator, string inputExpression, double[] expectedResult)
         {
@@ -18,19 +21,33 @@ namespace Calculator.Tests
                     }
                     else
                     {
-                        num = calculator.AddDigit(int.Parse(Convert.ToString(digit)));
+                        num = double.Parse(calculator.AddDigit(int.Parse(Convert.ToString(digit))));
                     }
                 }
+
                 Assert.That(Math.Abs(expectedResult[i] - num) < epsilon);
                 if (expression[i + 1] != '='.ToString())
                 {
-                    Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(expression[i + 1][0])) < epsilon);
+                    switch (expression[i + 1][0])
+                    {
+                        case '+':
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Addition)) < epsilon);
+                            break;
+                        case '-':
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Subtraction)) < epsilon);
+                            break;
+                        case '*':
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Multiplication)) < epsilon);
+                            break;
+                        case '/':
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Division)) < epsilon);
+                            break;
+                    }
                 }
                 else
                 {
                     Assert.That(Math.Abs(expectedResult[i + 1] - calculator.GetResult()) < epsilon);
                 }
-                
             }
         }
 
@@ -39,7 +56,7 @@ namespace Calculator.Tests
         {
             var calculator = new Calculator();
             calculator.AddDigit(1);
-            calculator.UseOperation('/');
+            calculator.UseOperation(Operations.Division);
             calculator.AddDigit(0);
             Assert.Throws<DivideByZeroException>(() => calculator.GetResult());
         }
@@ -50,7 +67,26 @@ namespace Calculator.Tests
             var calculator = new Calculator();
             calculator.AddDigit(1);
             calculator.DelateCurrentNumber();
-            Assert.That(Math.Abs(calculator.AddDigit(2) - 2) < epsilon);
+            Assert.That(Math.Abs(double.Parse(calculator.AddDigit(2)) - 2) < epsilon);
+        }
+
+        [Test]
+        public void TestUseOPerationAfterGetResult()
+        {
+            var calculator = new Calculator();
+            calculator.AddDigit(1);
+            calculator.UseOperation(Operations.Addition);
+            calculator.AddDigit(2);
+            Assert.That(Math.Abs(calculator.GetResult() - 3) < epsilon);
+            calculator.UseOperation(Operations.Multiplication);
+            calculator.AddDigit(3);
+            Assert.That(Math.Abs(calculator.GetResult() - 9) < epsilon);
+            calculator.UseOperation(Operations.Subtraction);
+            calculator.AddDigit(3);
+            Assert.That(Math.Abs(calculator.GetResult() - 6) < epsilon);
+            calculator.UseOperation(Operations.Division);
+            calculator.AddDigit(3);
+            Assert.That(Math.Abs(calculator.GetResult() - 2) < epsilon);
         }
 
         [TestCase("123", 12)]
@@ -68,21 +104,10 @@ namespace Calculator.Tests
                 }
                 else
                 {
-                    num = calculator.AddDigit(int.Parse(Convert.ToString(digit)));
+                    num = double.Parse(calculator.AddDigit(int.Parse(Convert.ToString(digit))));
                 }
             }
-            
-            Assert.That(Math.Abs(calculator.BackSpace() - expectedResult) < epsilon);
-        }
-
-        [Test]
-        public void UnsupportedOperation()
-        {
-            var calculator = new Calculator();
-            calculator.AddDigit(1);
-            calculator.UseOperation('^');
-            calculator.AddDigit(1);
-            Assert.Throws<ArgumentException>(() => calculator.GetResult());
+            Assert.That(Math.Abs(double.Parse(calculator.BackSpace()) - expectedResult) < epsilon);
         }
 
         public static class TestData

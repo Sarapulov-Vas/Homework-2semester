@@ -146,7 +146,7 @@ public class ParseTree
             }
             else
             {
-                throw new IncorrectInputException("Incorrect parse tree.");
+                throw new IncorrectInputException("Incorrect input expression.");
             }
         }
         else

@@ -60,7 +60,7 @@ public class ParseTree
             throw new IncorrectInputException("Empty file.");
         }
 
-        if (expression[0][0] == '(' && expression[0].Length == 2 &
+        if (expression[0][0] == '(' && expression[0].Length == 2 &&
             (expression[0][1] == '+' || expression[0][1] == '-' ||
             expression[0][1] == '*' || expression[0][1] == '/'))
         {

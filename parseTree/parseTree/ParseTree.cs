@@ -14,7 +14,7 @@ public class ParseTree
     public ParseTree(string path)
     {
         string expression = File.ReadAllText(path);
-        this.root = this.CreateParseTree(expression).Item1;
+        this.root = this.CreateParseTree(expression.Split()).Item1;
     }
 
     /// <summary>
@@ -53,37 +53,36 @@ public class ParseTree
         currentNode.Calculate();
     }
 
-    private (Node, int) CreateParseTree(string expression)
+    private (Node, int, int) CreateParseTree(string[] expression)
     {
-        if (expression.Length < 8)
+        if (expression[0] == string.Empty)
         {
-            throw new IncorrectInputException("Incorrect parse tree.");
+            throw new IncorrectInputException("Empty file.");
         }
 
-        if (expression[0] == '(' && expression[2] == ' ' &&
-            (expression[1] == '+' || expression[1] == '-' || expression[1] == '*' || expression[1] == '/'))
+        if (expression[0][0] == '(' && expression[0].Length == 2 &
+            (expression[0][1] == '+' || expression[0][1] == '-' ||
+            expression[0][1] == '*' || expression[0][1] == '/'))
         {
-            int i = 3;
+            var j = 2;
             Node leftOperand, rightOperand;
-            if (expression[i] == '(')
+            if (expression[1][0] == '(')
             {
-                int j = 0;
-                (leftOperand, j) = this.CreateParseTree(expression[i..]);
-                i += j;
+                (leftOperand, var currentElement, _) = this.CreateParseTree(expression[1..]);
+                j += currentElement;
             }
             else
             {
                 var stringNumber = new StringBuilder();
                 int number;
-                while (expression[i] != ' ')
+                foreach (var element in expression[1])
                 {
-                    if ((int)expression[i] > 57 || (int)expression[i] < 48)
+                    if (element > '9' || element < '0')
                     {
                         throw new IncorrectOperandException("Operand is not a number.");
                     }
 
-                    stringNumber.Append(expression[i]);
-                    ++i;
+                    stringNumber.Append(element);
                 }
 
                 if (int.TryParse(stringNumber.ToString(), out number))
@@ -96,28 +95,29 @@ public class ParseTree
                 }
             }
 
-            ++i;
-            if (expression[i] == '(')
+            var currentPosition = 0;
+            if (expression[j][0] == '(')
             {
-                int j = 0;
-                (rightOperand, j) = this.CreateParseTree(expression[i..]);
-                i += j;
+                (rightOperand, var k, currentPosition) = this.CreateParseTree(expression[j..]);
+                j += k;
             }
             else
             {
                 var stringNumber = new StringBuilder();
                 int number;
-                while (expression[i] != ')')
+                var i = 0;
+                while (expression[j][i] != ')')
                 {
-                    if ((int)expression[i] > 57 || (int)expression[i] < 48)
+                    if (expression[j][i] > '9' || (int)expression[j][i] < '0')
                     {
                         throw new IncorrectOperandException("Operand is not a number.");
                     }
 
-                    stringNumber.Append(expression[i]);
+                    stringNumber.Append(expression[j][i]);
                     ++i;
                 }
 
+                currentPosition = i;
                 if (int.TryParse(stringNumber.ToString(), out number))
                 {
                     rightOperand = new NumberOperand(number);
@@ -128,23 +128,18 @@ public class ParseTree
                 }
             }
 
-            if (expression.Length <= i)
+            if (expression[j].Length > currentPosition && expression[j][currentPosition] == ')')
             {
-                throw new IncorrectInputException("Incorrect parse tree.");
-            }
-
-            if (expression[i] == ')')
-            {
-                switch (expression[1])
+                switch (expression[0][1])
                 {
                     case '+':
-                        return (new AdditionOperator(leftOperand, rightOperand), i + 1);
+                        return (new AdditionOperator(leftOperand, rightOperand), j, ++currentPosition);
                     case '-':
-                        return (new SubtractionOperator(leftOperand, rightOperand), i + 1);
+                        return (new SubtractionOperator(leftOperand, rightOperand), j, ++currentPosition);
                     case '*':
-                        return (new MultiplicationOperator(leftOperand, rightOperand), i + 1);
+                        return (new MultiplicationOperator(leftOperand, rightOperand), j, ++currentPosition);
                     case '/':
-                        return (new DivisionOperator(leftOperand, rightOperand), i + 1);
+                        return (new DivisionOperator(leftOperand, rightOperand), j, ++currentPosition);
                     default:
                         throw new IncorrectInputException("Unsupported Operation.");
                 }
@@ -156,7 +151,7 @@ public class ParseTree
         }
         else
         {
-            throw new IncorrectInputException("Incorrect parse tree.");
+            throw new IncorrectInputException("The expression has an imbalance of brackets.");
         }
     }
 }

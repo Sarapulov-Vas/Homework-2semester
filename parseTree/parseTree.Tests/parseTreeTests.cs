@@ -9,6 +9,14 @@ public class Tests
     {
         var parseTree = new ParseTree(path);
         Assert.That(parseTree.Calculate(), Is.EqualTo(expectedResult));
+    }
+
+    [TestCase("../../../TestFiles/TestCorrect_1.txt")]
+    [TestCase("../../../TestFiles/TestCorrect_2.txt")]
+    [TestCase("../../../TestFiles/TestCorrect_3.txt")]
+    public void TestPrint(string path)
+    {
+        var parseTree = new ParseTree(path);
         Assert.That(File.ReadAllText(path), Is.EqualTo(parseTree.PrintParseTree())) ;
     }
 

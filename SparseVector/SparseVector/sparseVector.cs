@@ -131,7 +131,7 @@ public class SparseVector
     /// <returns>Result of multiplication vectors.</returns>
     public static int Multiplication(SparseVector firstVector, SparseVector secondVector)
     {
-        if (firstVector.IsEmpty || firstVector.IsEmpty)
+        if (firstVector.IsEmpty || secondVector.IsEmpty)
         {
             throw new ArgumentException("Null vectors.");
         }
@@ -171,7 +171,7 @@ public class SparseVector
             throw new ArgumentException("Different lengh of vectos.");
         }
 
-        if (firstVector.IsEmpty || firstVector.IsEmpty)
+        if (firstVector.IsEmpty || secondVector.IsEmpty)
         {
             throw new ArgumentException("Null vectors.");
         }

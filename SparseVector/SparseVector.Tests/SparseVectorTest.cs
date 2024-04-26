@@ -5,14 +5,13 @@ public class Tests
     [Test]
     public void TestGetVector()
     {
-        (int, int)[] expectedVector = [(2, 3), (4, 5)];
+        int[] expectedVector = [0, 0, 3, 0, 5];
         var vector = new SparseVector([(2, 3), (4, 5)]);
-        for (int i = 0; i < expectedVector.Length; i++)
-        {
-            Assert.That(vector.Vector[i].number, Is.EqualTo(expectedVector[i].Item1));
-            Assert.That(vector.Vector[i].value, Is.EqualTo(expectedVector[i].Item2));
-        }
         Assert.That(vector.Size, Is.EqualTo(5));
+        for (int i = 0; i < vector.Size; i++)
+        {
+            Assert.That(vector[i], Is.EqualTo(expectedVector[i]));
+        }
     }
 
     [Test]
@@ -32,31 +31,29 @@ public class Tests
     [Test]
     public void TestAddition()
     {
-        (int, int)[] expectedVector = [(1, 2), (2, 3), (4, 10)];
+        int[] expectedVector = [0, 2, 3, 0, 10];
         var vector1 = new SparseVector([(2, 3), (4, 5)]);
         var vector2 = new SparseVector([(1, 2), (4, 5)]);
-        var result = SparseVector.Addition(vector1, vector2);
-        for (int i = 0; i < expectedVector.Length; i++)
-        {
-            Assert.That(result.Vector[i].number, Is.EqualTo(expectedVector[i].Item1));
-            Assert.That(result.Vector[i].value, Is.EqualTo(expectedVector[i].Item2));
-        }
+        var result = SparseVector.Add(vector1, vector2);
         Assert.That(result.Size, Is.EqualTo(5));
+        for (int i = 0; i < result.Size; i++)
+        {
+            Assert.That(result[i], Is.EqualTo(expectedVector[i]));
+        }
     }
 
     [Test]
     public void TestSubtraction()
     {
-        (int, int)[] expectedVector = [(1, -2), (2, 3), (4, 5)];
+        int[] expectedVector = [0, -2, 3, 0, 5];
         var vector1 = new SparseVector([(2, 3), (4, 10)]);
         var vector2 = new SparseVector([(1, 2), (4, 5)]);
         var result = SparseVector.Subtraction(vector1, vector2);
-        for (int i = 0; i < expectedVector.Length; i++)
-        {
-            Assert.That(result.Vector[i].number, Is.EqualTo(expectedVector[i].Item1));
-            Assert.That(result.Vector[i].value, Is.EqualTo(expectedVector[i].Item2));
-        }
         Assert.That(result.Size, Is.EqualTo(5));
+        for (int i = 0; i < result.Size; i++)
+        {
+            Assert.That(result[i], Is.EqualTo(expectedVector[i]));
+        }
     }
 
     [Test]
@@ -66,5 +63,19 @@ public class Tests
         var vector2 = new SparseVector([(1, 2), (4, 5)]);
         var result = SparseVector.Multiplication(vector1, vector2);
         Assert.That(result, Is.EqualTo(25));
+    }
+
+    [Test]
+    public void TestVectorIndexer()
+    {
+        int[] expectedVector = [1, 0, 3, 0, 5, 0, 0, 8];
+        var vector = new SparseVector([(2, 3), (4, 5)]);
+        vector[0] = 1;
+        vector[7] = 8;
+        Assert.That(vector.Size, Is.EqualTo(8));
+        for (int i = 0; i < vector.Size; i++)
+        {
+            Assert.That(vector[i], Is.EqualTo(expectedVector[i]));
+        }
     }
 }

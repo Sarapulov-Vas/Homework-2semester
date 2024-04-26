@@ -7,25 +7,64 @@ namespace SparseVector;
 /// </summary>
 public class SparseVector
 {
+    private readonly List<(int number, int value)> vector;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SparseVector"/> class.
     /// </summary>
-    /// <param name="vector">Vector.</param>
+    /// <param name="vector">A vector consists of index-value pairs.</param>
     public SparseVector((int number, int value)[] vector)
     {
-        Vector = new ();
+        this.vector = new ();
         foreach (var element in vector)
         {
-            this.Vector.Add((element.number, element.value));
+            this.vector.Add((element.number, element.value));
         }
 
         Size = vector[^1].number + 1;
     }
 
     /// <summary>
-    /// Gets vector.
+    /// Indexer that implements access to elements of the vector.
     /// </summary>
-    public List<(int number, int value)> Vector { get; private set; }
+    /// <param name="index">The index of the element of the vector.</param>
+    /// <returns>The value of a vector coordinate.</returns>
+    /// <exception cref="IndexOutOfRangeException">Exception in case the index exceeds the size of the vector.</exception>
+    public int this[int index]
+    {
+        get
+        {
+            if (index >= Size)
+            {
+                throw new IndexOutOfRangeException("Index out of range.");
+            }
+
+            foreach (var element in vector)
+            {
+                if (element.number == index)
+                {
+                    return element.value;
+                }
+            }
+
+            return 0;
+        }
+
+        set
+        {
+            for (int i = 0; i < vector.Count; ++i)
+            {
+                if (vector[i].number == index)
+                {
+                    vector[i] = (index, value);
+                    return;
+                }
+            }
+
+            vector.Add((index, value));
+            Size = index + 1;
+        }
+    }
 
     /// <summary>
     /// Gets size.
@@ -38,33 +77,29 @@ public class SparseVector
     /// <returns>Veector.</returns>
     public int[] GetOriginalVector()
     {
-        var result = new List<int>();
+        var result = new int[Size];
         int index = 0;
         for (int i = 0; i < Size; i++)
         {
-            if (Vector[index].number == i)
+            if (vector[index].number == i)
             {
-                result.Add(Vector[index].value);
+                result[i] = vector[index].value;
                 index++;
             }
             else
             {
-                result.Add(0);
+                result[i] = 0;
             }
         }
 
-        return result.ToArray();
+        return result;
     }
 
     /// <summary>
     /// A method that implements checking a vector for null.
     /// </summary>
-    /// <param name="vector">Vector.</param>
-    /// <returns>Is it zero-vctor.</returns>
-    public static bool CheckingVectorNull(SparseVector vector)
-    {
-        return vector.Size == 0;
-    }
+    /// <returns>Is it zero-vector.</returns>
+    public bool IsEmpty => Size == 0;
 
     /// <summary>
     /// Method realising addition of vectors.
@@ -72,7 +107,7 @@ public class SparseVector
     /// <param name="firstVector">First vector.</param>
     /// <param name="secondVector">Second vector.</param>
     /// <returns>Result of addition vectors.</returns>
-    public static SparseVector Addition(SparseVector firstVector, SparseVector secondVector)
+    public static SparseVector Add(SparseVector firstVector, SparseVector secondVector)
     {
         return MakeOperation(firstVector, secondVector, (x, y) => x + y);
     }
@@ -96,7 +131,7 @@ public class SparseVector
     /// <returns>Result of multiplication vectors.</returns>
     public static int Multiplication(SparseVector firstVector, SparseVector secondVector)
     {
-        if (CheckingVectorNull(firstVector) || CheckingVectorNull(secondVector))
+        if (firstVector.IsEmpty || firstVector.IsEmpty)
         {
             throw new ArgumentException("Null vectors.");
         }
@@ -106,24 +141,23 @@ public class SparseVector
         int index2 = 0;
         for (int i = 0; i < firstVector.Size; ++i)
         {
-            if (firstVector.Vector[index1].number == i && secondVector.Vector[index2].number == i)
+            if (firstVector.vector[index1].number == i && secondVector.vector[index2].number == i)
             {
-                result += firstVector.Vector[index1].value * secondVector.Vector[index2].value;
+                result += firstVector.vector[index1].value * secondVector.vector[index2].value;
                 index1++;
                 index2++;
                 continue;
             }
 
-            if (firstVector.Vector[index1].number == i)
+            if (firstVector.vector[index1].number == i)
             {
                 index1++;
                 continue;
             }
 
-            if (secondVector.Vector[index2].number == i)
+            if (secondVector.vector[index2].number == i)
             {
                 index2++;
-                continue;
             }
         }
 
@@ -137,7 +171,7 @@ public class SparseVector
             throw new ArgumentException("Different lengh of vectos.");
         }
 
-        if (CheckingVectorNull(firstVector) || CheckingVectorNull(secondVector))
+        if (firstVector.IsEmpty || firstVector.IsEmpty)
         {
             throw new ArgumentException("Null vectors.");
         }
@@ -147,11 +181,11 @@ public class SparseVector
         int index2 = 0;
         for (int i = 0; i < firstVector.Size; ++i)
         {
-            if (firstVector.Vector[index1].number == i && secondVector.Vector[index2].number == i)
+            if (firstVector.vector[index1].number == i && secondVector.vector[index2].number == i)
             {
-                if (func(firstVector.Vector[index1].value, secondVector.Vector[index2].value) != 0)
+                if (func(firstVector.vector[index1].value, secondVector.vector[index2].value) != 0)
                 {
-                    resultVector.Add((i, func(firstVector.Vector[index1].value, secondVector.Vector[index2].value)));
+                    resultVector.Add((i, func(firstVector.vector[index1].value, secondVector.vector[index2].value)));
                 }
 
                 index1++;
@@ -159,16 +193,16 @@ public class SparseVector
                 continue;
             }
 
-            if (firstVector.Vector[index1].number == i)
+            if (firstVector.vector[index1].number == i)
             {
-                resultVector.Add((i, func(firstVector.Vector[index1].value, 0)));
+                resultVector.Add((i, func(firstVector.vector[index1].value, 0)));
                 index1++;
                 continue;
             }
 
-            if (secondVector.Vector[index2].number == i)
+            if (secondVector.vector[index2].number == i)
             {
-                resultVector.Add((i, func(0, secondVector.Vector[index2].value)));
+                resultVector.Add((i, func(0, secondVector.vector[index2].value)));
                 index2++;
                 continue;
             }

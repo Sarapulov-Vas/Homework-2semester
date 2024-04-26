@@ -1,17 +1,12 @@
 /// <summary>
-/// A stack class implemented through an array.
+/// A stack class implemented through a list.
 /// </summary>
-internal class ArrayStack : IStack
+public class ListStack : IStack
 {
-        /// <summary>
-    /// Current size of stack.
-    /// </summary>
-    private static int size = 10;
-
     /// <summary>
-    /// Array implementing the stack.
+    /// A list for the implementation of the stack.
     /// </summary>
-    private double[] stack = new double[size];
+    private readonly List<double> stack = new List<double>();
 
     /// <summary>
     /// Stack length field.
@@ -32,13 +27,8 @@ internal class ArrayStack : IStack
     /// <param name="value">Adding a value to the stack.</param>
     public void Push(double value)
     {
-        if (this.length + 1 == size)
-        {
-            this.Resize();
-        }
-
-        this.stack[this.length] = value;
-        this.length++;
+        this.stack.Add(value);
+        this.length = this.stack.Count;
     }
 
     /// <summary>
@@ -47,17 +37,9 @@ internal class ArrayStack : IStack
     /// <returns>Removed element from the stack.</returns>
     public double Pop()
     {
-        this.length--;
-        double value = this.stack[this.length];
+        double value = this.stack[^1];
+        this.stack.RemoveAt(this.stack.Count - 1);
+        this.length = this.stack.Count;
         return value;
-    }
-
-    /// <summary>
-    /// A method for increasing the size of an array.
-    /// </summary>
-    private void Resize()
-    {
-        size += 10;
-        Array.Resize(ref this.stack, size);
     }
 }

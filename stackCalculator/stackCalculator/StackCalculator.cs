@@ -1,7 +1,7 @@
 /// <summary>
 /// Stack Calculator Class.
 /// </summary>
-internal class StackCalculator
+public class StackCalculator
 {
     /// <summary>
     /// Stack for storing numbers.
@@ -34,13 +34,11 @@ internal class StackCalculator
                 int number;
                 if (!int.TryParse(element, out number))
                 {
-                    Console.WriteLine("Wrong input!");
                     while (this.stack.Length != 0)
                     {
                         this.stack.Pop();
                     }
-
-                    return 0;
+                    throw new ArgumentException("Wrong input!");
                 }
 
                 this.stack.Push(number);
@@ -63,48 +61,43 @@ internal class StackCalculator
                     case "/":
                         if (Math.Abs(secondNumber) <= epsilon)
                         {
-                            Console.WriteLine("Division by zero!");
-                            while (this.stack.Length != 0)
-                            {
-                                this.stack.Pop();
-                            }
-
-                            return 0;
-                        }
-
-                        this.stack.Push(firstNumbre / secondNumber);
-                        break;
-                    default:
-                        Console.WriteLine("Wrong input!");
                         while (this.stack.Length != 0)
                         {
                             this.stack.Pop();
                         }
 
-                        return 0;
+                        throw new DivideByZeroException("Division by zero!");
+                        }
+
+                        this.stack.Push(firstNumbre / secondNumber);
+                        break;
+                    default:
+                        while (this.stack.Length != 0)
+                        {
+                            this.stack.Pop();
+                        }
+
+                        throw new ArgumentException("Wrong input!");
                 }
             }
             else
             {
-                Console.WriteLine("Too many operations");
                 while (this.stack.Length != 0)
                 {
                     this.stack.Pop();
                 }
 
-                return 0;
+                throw new Exception("Too much operations!");
             }
         }
 
         if (this.stack.Length != 1)
         {
-            Console.WriteLine("Too much argument!");
             while (this.stack.Length != 0)
             {
                 this.stack.Pop();
             }
-
-            return 0;
+            throw new Exception("Too much arguments!");
         }
 
         return this.stack.Pop();

@@ -8,7 +8,7 @@ public class Tests
     public void TestCorrectWork(string inputFilePath, string resultFilePath, string expectedResultFilePath)
     {
         Prima.Start(inputFilePath, resultFilePath);
-        Assert.That(GraphsIsEqual(Prima.ParseFile(resultFilePath), Prima.ParseFile(expectedResultFilePath)));
+        Assert.That(AreGraphsIsEqual(Prima.ParseFile(resultFilePath), Prima.ParseFile(expectedResultFilePath)));
     }
 
     [TestCase("../../../testFiles/emptyFile.txt")]

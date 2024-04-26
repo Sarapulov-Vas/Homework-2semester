@@ -38,7 +38,6 @@ public class StackCalculator
                     {
                         this.stack.Pop();
                     }
-
                     throw new ArgumentException("Wrong input!");
                 }
 
@@ -98,7 +97,6 @@ public class StackCalculator
             {
                 this.stack.Pop();
             }
-
             throw new Exception("Too much arguments!");
         }
 

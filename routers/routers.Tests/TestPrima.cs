@@ -25,8 +25,8 @@ public class Tests
     {
         Assert.Throws<UnboundGraphException>(() => Prima.Start(inputFilePath, ""));
     }
-    
-    private static bool GraphsIsEqual(Net firstGraph, Net secondGraph)
+
+    private static bool AreGraphsIsEqual(Net firstGraph, Net secondGraph)
     {
         if (firstGraph.CountOfVertex != secondGraph.CountOfVertex || firstGraph.CountOfEdges != secondGraph.CountOfEdges)
         {

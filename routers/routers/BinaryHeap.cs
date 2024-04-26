@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 
-
 /// <summary>
 /// A class that implements a priority queue.
 /// </summary>

@@ -33,20 +33,15 @@ public class Net
     /// </summary>
     /// <param name="vertex">Current vertrx.</param>
     /// <returns>A list of adjacent vertices.</returns>
-    public List<(int vertex, int weight)> GetListOfAdjacentVertices(int vertex)
-    {
-        return graph[vertex];
-    }
+    public List<(int vertex, int weight)> GetListOfAdjacentVertices(int vertex) => return graph[vertex];
+
 
     /// <summary>
     /// A method for verifying a vertex in a graph.
     /// </summary>
     /// <param name="vertex">Vertex.</param>
     /// <returns>Whether the vertex is contained in the graph.</returns>
-    public bool ContainsVertex(int vertex)
-    {
-        return graph.ContainsKey(vertex);
-    }
+    public bool ContainsVertex(int vertex) => return graph.ContainsKey(vertex);
 
     private void AddPareOfVertices(int Vertex1, int Vertex2, int weight)
     {

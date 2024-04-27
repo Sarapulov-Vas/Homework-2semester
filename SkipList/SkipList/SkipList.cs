@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.ComponentModel;
 using System.Security.Principal;
 
 namespace SkipList;
@@ -62,8 +63,7 @@ public class SkipList<T> : IList<T>
     {
         if (currentLevel == null)
         {
-            currentLevel = new Level();
-            currentLevel.AddLast(item, null);
+            currentLevel = new Level(item);
         }
         else
         {
@@ -141,7 +141,31 @@ public class SkipList<T> : IList<T>
 
     public int IndexOf(T item)
     {
-        throw new NotImplementedException();
+        if (this.currentLevel == null)
+        {
+            return -1;
+        }
+
+        var currentLevel = this.currentLevel;
+        while (currentLevel.DownLevel != null)
+        {
+            currentLevel = currentLevel.DownLevel;
+        }
+
+        var index = 0;
+        var currentNode = currentLevel.List;
+        while (currentNode.Next != null)
+        {
+            if (currentNode.Equals(item))
+            {
+                return index;
+            }
+
+            index++;
+            currentNode = currentNode.Next;
+        }
+
+        return -1;
     }
 
     public void Insert(int index, T item)
@@ -151,17 +175,41 @@ public class SkipList<T> : IList<T>
 
     public bool Remove(T item)
     {
-        throw new NotImplementedException();
+        if (currentLevel == null)
+        {
+            return false;
+        }
+
+        count--;
+        return RemoveElement(currentLevel, item);
     }
 
     public void RemoveAt(int index)
     {
-        throw new NotImplementedException();
+        Remove(this[index]);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
         throw new NotImplementedException();
+    }
+
+    private bool RemoveElement(Level currentLevel, T item)
+    {
+        if (currentLevel.List.Value.Equals(item))
+        {
+            currentLevel.RemoveFirst(currentLevel);
+            return true;
+        }
+
+        var isDelaet = false;
+        while (currentLevel != null)
+        {
+            currentLevel.Remove(item);
+            currentLevel = currentLevel.DownLevel;
+        }
+
+        return isDelaet;
     }
 
     private ListNode? FindItem(ListNode currentNode, T item)
@@ -263,8 +311,11 @@ public class SkipList<T> : IList<T>
 
     private class Level
     {
-        public Level()
+        public Level(T item)
         {
+            List = new ListNode(null, null, item);
+            lastNode = List;
+            Count++;
         }
 
         public Level(ListNode head, Level downLevel)
@@ -275,13 +326,61 @@ public class SkipList<T> : IList<T>
             DownLevel = downLevel;
         }
 
-        public int Count { get; private set; }
+        public int Count { get; set; }
 
         public ListNode? List { get; private set; }
 
-        public Level DownLevel { get; }
+        public Level? DownLevel { get; }
 
         private ListNode? lastNode;
+
+        public ListNode RemoveFirst(Level currentLevel)
+        {
+            if (currentLevel.DownLevel != null)
+            {
+                var downNode = RemoveFirst(currentLevel.DownLevel);
+                if (currentLevel.List.Next == null)
+                {
+                    currentLevel.List = new ListNode(null, downNode.Down, downNode.Value);
+                    return currentLevel.List;
+                }
+
+                if (!downNode.Value.Equals(currentLevel.List.Next.Value))
+                {
+                    var tmp = new ListNode(currentLevel.List.Next, downNode.Down, downNode.Value);
+                    currentLevel.List = tmp;
+                }
+                else
+                {
+                    currentLevel.List = currentLevel.List.Next;
+                }
+            }
+            else
+            {
+                currentLevel.List = currentLevel.List.Next;
+                currentLevel.Count--;
+            }
+
+            return currentLevel.List;
+        }
+
+        public bool Remove(T item)
+        {
+            var currentNode = List;
+            while (currentNode.Next != null && item.CompareTo(currentNode.Next.Value) > 0)
+            {
+                currentNode = currentNode.Next;
+            }
+
+            if (currentNode.Next != null)
+            {
+                currentNode.Next = currentNode.Next.Next;
+                Count--;
+                return true;
+            }
+
+            return false;
+        }
 
         public ListNode AddAfter(ListNode? node, ListNode? down, T value)
         {

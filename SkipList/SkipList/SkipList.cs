@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.ComponentModel;
-using System.Security.Principal;
+﻿namespace SkipList;
+using System.Collections;
 
-namespace SkipList;
-
+/// <summary>
+/// Class implementing skip list.
+/// </summary>
+/// <typeparam name="T">Type of elemnts.</typeparam>
 public class SkipList<T> : IList<T>
     where T : IComparable<T>
 {
@@ -13,34 +14,58 @@ public class SkipList<T> : IList<T>
 
     private int count;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SkipList"/> class.
+    /// </summary>
     public SkipList()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SkipList"/> class.
+    /// </summary>
+    /// <param name="orginList">A list to convert to a skip list.</param>
     public SkipList(List<T> orginList)
     {
         foreach (var element in orginList)
         {
-            Add(element);
+            this.Add(element);
         }
     }
 
+    /// <summary>
+    /// Gets the number of items at the bottom level of the skip list.
+    /// </summary>
+    public int Count => this.count;
+
+    /// <summary>
+    /// Gets a value indicating whether this collection is read-only.
+    /// </summary>
+    public bool IsReadOnly => false;
+
+    /// <summary>
+    /// Skip list indexer.
+    /// </summary>
+    /// <param name="index">Index.</param>
+    /// <returns>Element of skip list.</returns>
+    /// <exception cref="IndexOutOfRangeException">Exception when the index exceeds the skip list boundary.</exception>
+    /// <exception cref="NotSupportedException">Exception when attempting to modify existing elements.</exception>
     public T this[int index]
     {
         get
         {
-            if (index >= count)
+            if (index >= this.count)
             {
                 throw new IndexOutOfRangeException("Index out of range.");
             }
 
-            var level = currentLevel;
+            var level = this.currentLevel;
             while (level.DownLevel != null)
             {
                 level = level.DownLevel;
             }
 
-            var node = currentLevel.List;
+            var node = this.currentLevel.List;
             for (int i = 0; i < index; ++i)
             {
                 node = node.Next;
@@ -55,42 +80,50 @@ public class SkipList<T> : IList<T>
         }
     }
 
-    public int Count => count;
-
-    public bool IsReadOnly => true;
-
+    /// <summary>
+    /// A method for adding items to a skip list.
+    /// </summary>
+    /// <param name="item">Element to add.</param>
     public void Add(T item)
     {
-        if (currentLevel == null)
+        if (this.currentLevel == null)
         {
-            currentLevel = new Level(item);
+            this.currentLevel = new Level(item);
         }
         else
         {
-            AddNode(currentLevel, currentLevel.List, item);
-            while (currentLevel.Count > 1)
+            this.AddNode(this.currentLevel, this.currentLevel.List, item);
+            while (this.currentLevel.Count > 1)
             {
-                currentLevel = BuildLevel(currentLevel);
+                this.currentLevel = this.BuildLevel(this.currentLevel);
             }
         }
 
-        count++;
+        this.count++;
     }
 
+    /// <summary>
+    /// A method to remove all items from the skip list.
+    /// </summary>
     public void Clear()
     {
-        count = 0;
-        currentLevel = null;
+        this.count = 0;
+        this.currentLevel = null;
     }
 
+    /// <summary>
+    /// Method that checks if an item is contained in the skip list.
+    /// </summary>
+    /// <param name="item">Element to check.</param>
+    /// <returns>Whether the skip list contains an element.</returns>
     public bool Contains(T item)
     {
-        if (currentLevel == null)
+        if (this.currentLevel == null)
         {
             return false;
         }
 
-        if (FindItem(currentLevel.List, item) != null)
+        if (this.FindItem(this.currentLevel.List, item) != null)
         {
             return true;
         }
@@ -98,6 +131,13 @@ public class SkipList<T> : IList<T>
         return false;
     }
 
+    /// <summary>
+    /// Method that copies the specified range of elements into an array.
+    /// </summary>
+    /// <param name="array">Array into which the copied elements will be copied.</param>
+    /// <param name="arrayIndex">The index from which the items will be copied.</param>
+    /// <exception cref="ArgumentException">Exception when it is impossible to copy elements into an array.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Exception in case the index goes beyond the skip list boundaries.</exception>
     public void CopyTo(T[] array, int arrayIndex)
     {
         if (array == null)
@@ -105,12 +145,12 @@ public class SkipList<T> : IList<T>
             throw new ArgumentException("Null array");
         }
 
-        if (this.currentLevel == null || arrayIndex < 0 || arrayIndex >= count)
+        if (this.currentLevel == null || arrayIndex < 0 || arrayIndex >= this.count)
         {
             throw new ArgumentOutOfRangeException("Index out of range.");
         }
 
-        if (array.Length < count - arrayIndex)
+        if (array.Length < this.count - arrayIndex)
         {
             throw new ArgumentException("Insufficient array size.");
         }
@@ -127,18 +167,24 @@ public class SkipList<T> : IList<T>
             currentNode = currentNode.Next;
         }
 
-        for (int i = 0; i < count - arrayIndex; i++)
+        for (int i = 0; i < this.count - arrayIndex; i++)
         {
             array[i] = currentNode.Value;
             currentNode = currentNode.Next;
         }
     }
 
-    public IEnumerator<T> GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// Method for obtaining an enumerator.
+    /// </summary>
+    /// <returns>Enumerator.</returns>
+    public IEnumerator<T> GetEnumerator() => new Enumerator(this.currentLevel);
 
+    /// <summary>
+    /// A method for finding the index of an item in a skip list.
+    /// </summary>
+    /// <param name="item">Item.</param>
+    /// <returns>Index of element.</returns>
     public int IndexOf(T item)
     {
         if (this.currentLevel == null)
@@ -168,31 +214,47 @@ public class SkipList<T> : IList<T>
         return -1;
     }
 
+    /// <summary>
+    /// Method of insertion into skip list (Not implemented because it doesn't make sense).
+    /// </summary>
+    /// <param name="index">Index.</param>
+    /// <param name="item">Item.</param>
+    /// <exception cref="NotSupportedException">Exception when there is no implementation of the method :(.</exception>
     public void Insert(int index, T item)
     {
         throw new NotSupportedException();
     }
 
+    /// <summary>
+    /// Method to remove an item from the skip list.
+    /// </summary>
+    /// <param name="item">Element.</param>
+    /// <returns>Whether the element has been removed.</returns>
     public bool Remove(T item)
     {
-        if (currentLevel == null)
+        if (this.currentLevel == null)
         {
             return false;
         }
 
-        count--;
-        return RemoveElement(currentLevel, item);
+        this.count--;
+        return this.RemoveElement(this.currentLevel, item);
     }
 
+    /// <summary>
+    /// Method for deleting an element by index.
+    /// </summary>
+    /// <param name="index">Index.</param>
     public void RemoveAt(int index)
     {
-        Remove(this[index]);
+        this.Remove(this[index]);
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// Method for obtaining an enumerator.
+    /// </summary>
+    /// <returns>Enumerator.</returns>
+    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this.currentLevel);
 
     private bool RemoveElement(Level currentLevel, T item)
     {
@@ -214,24 +276,25 @@ public class SkipList<T> : IList<T>
 
     private ListNode? FindItem(ListNode currentNode, T item)
     {
-        while (currentNode != null && item.CompareTo(currentNode.Value) > 0)
+        var node = currentNode;
+        while (node != null && item.CompareTo(node.Value) > 0)
         {
-            currentNode = currentNode.Next;
+            node = node.Next;
         }
 
-        if (currentNode == null)
+        if (node == null)
         {
             return null;
         }
 
-        if (item.Equals(currentNode.Value))
+        if (item.Equals(node.Value))
         {
-            return currentNode;
+            return node;
         }
 
-        if (currentNode.Down != null)
+        if (node.Down != null)
         {
-            return FindItem(currentNode.Down, item);
+            return this.FindItem(node.Down, item);
         }
 
         return null;
@@ -243,7 +306,7 @@ public class SkipList<T> : IList<T>
         {
             if (currentLevel.DownLevel != null)
             {
-                return currentLevel.AddFirst(AddNode(currentLevel.DownLevel, currentNode, item), item);
+                return currentLevel.AddFirst(this.AddNode(currentLevel.DownLevel, currentNode, item), item);
             }
             else
             {
@@ -257,15 +320,15 @@ public class SkipList<T> : IList<T>
         }
 
         ListNode? downNode = null;
-        if (currentLevel.DownLevel != null)
+        if (currentNode.Down != null && currentLevel.DownLevel != null)
         {
-            downNode = AddNode(currentLevel.DownLevel, currentNode.Down, item);
+            downNode = this.AddNode(currentLevel.DownLevel, currentNode.Down, item);
         }
 
         if (downNode != null || currentLevel.DownLevel == null)
         {
             var newNode = currentLevel.AddAfter(currentNode, downNode, item);
-            if (rnd.NextDouble() < 0.5)
+            if (this.rnd.NextDouble() < 0.5)
             {
                 return newNode;
             }
@@ -282,7 +345,7 @@ public class SkipList<T> : IList<T>
         var currentNode = downLevel.List.Next;
         while (currentNode != null)
         {
-            if (rnd.NextDouble() < 0.5)
+            if (this.rnd.NextDouble() < 0.5)
             {
                 currentLevel.AddLast(currentNode.Value, currentNode);
             }
@@ -297,9 +360,9 @@ public class SkipList<T> : IList<T>
     {
         public ListNode(ListNode? next, ListNode? down, T value)
         {
-            Next = next;
-            Down = down;
-            Value = value;
+            this.Next = next;
+            this.Down = down;
+            this.Value = value;
         }
 
         public T Value { get; set; }
@@ -311,19 +374,21 @@ public class SkipList<T> : IList<T>
 
     private class Level
     {
+        private ListNode? lastNode;
+
         public Level(T item)
         {
-            List = new ListNode(null, null, item);
-            lastNode = List;
-            Count++;
+            this.List = new ListNode(null, null, item);
+            this.lastNode = this.List;
+            this.Count++;
         }
 
         public Level(ListNode head, Level downLevel)
         {
-            List = new ListNode(null, head, head.Value);
-            lastNode = List;
-            Count++;
-            DownLevel = downLevel;
+            this.List = new ListNode(null, head, head.Value);
+            this.lastNode = this.List;
+            this.Count++;
+            this.DownLevel = downLevel;
         }
 
         public int Count { get; set; }
@@ -332,13 +397,11 @@ public class SkipList<T> : IList<T>
 
         public Level? DownLevel { get; }
 
-        private ListNode? lastNode;
-
         public ListNode RemoveFirst(Level currentLevel)
         {
             if (currentLevel.DownLevel != null)
             {
-                var downNode = RemoveFirst(currentLevel.DownLevel);
+                var downNode = this.RemoveFirst(currentLevel.DownLevel);
                 if (currentLevel.List.Next == null)
                 {
                     currentLevel.List = new ListNode(null, downNode.Down, downNode.Value);
@@ -366,7 +429,7 @@ public class SkipList<T> : IList<T>
 
         public bool Remove(T item)
         {
-            var currentNode = List;
+            var currentNode = this.List;
             while (currentNode.Next != null && item.CompareTo(currentNode.Next.Value) > 0)
             {
                 currentNode = currentNode.Next;
@@ -375,7 +438,7 @@ public class SkipList<T> : IList<T>
             if (currentNode.Next != null)
             {
                 currentNode.Next = currentNode.Next.Next;
-                Count--;
+                this.Count--;
                 return true;
             }
 
@@ -384,12 +447,12 @@ public class SkipList<T> : IList<T>
 
         public ListNode AddAfter(ListNode? node, ListNode? down, T value)
         {
-            Count++;
+            this.Count++;
             var tmp = node.Next;
             node.Next = new ListNode(tmp, down, value);
             if (tmp == null)
             {
-                lastNode = node.Next;
+                this.lastNode = node.Next;
             }
 
             return node.Next;
@@ -397,25 +460,107 @@ public class SkipList<T> : IList<T>
 
         public ListNode AddFirst(ListNode? down, T value)
         {
-            var tmp = new ListNode(List, down, value);
-            List = tmp;
-            Count++;
+            var tmp = new ListNode(this.List, down, value);
+            this.List = tmp;
+            this.Count++;
             return tmp;
         }
 
         public void AddLast(T value, ListNode? down)
         {
-            Count++;
-            if (List == null)
+            this.Count++;
+            if (this.List == null)
             {
-                List = new ListNode(null, down, value);
-                lastNode = List;
+                this.List = new ListNode(null, down, value);
+                this.lastNode = this.List;
             }
             else
             {
-                lastNode.Next = new ListNode(null, down, value);
-                lastNode = lastNode.Next;
+                this.lastNode.Next = new ListNode(null, down, value);
+                this.lastNode = this.lastNode.Next;
             }
+        }
+    }
+
+    private class Enumerator : IEnumerator<T>
+    {
+        private readonly ListNode? head;
+
+        private ListNode? current;
+
+        public Enumerator(Level level)
+        {
+            if (level == null)
+            {
+                this.head = null;
+                this.current = null;
+            }
+            else
+            {
+                var currentLevel = level;
+                while (currentLevel.DownLevel != null)
+                {
+                    currentLevel = currentLevel.DownLevel;
+                }
+
+                this.head = currentLevel.List;
+                this.current = this.head;
+            }
+        }
+
+        public object Current
+        {
+            get
+            {
+                if (this.current == null)
+                {
+                    throw new InvalidOperationException("Skip list is empty.");
+                }
+                else
+                {
+                    return this.current;
+                }
+            }
+        }
+
+        T IEnumerator<T>.Current
+        {
+            get
+            {
+                if (this.current == null)
+                {
+                    throw new InvalidOperationException("Skip list is empty.");
+                }
+                else
+                {
+                    return this.current.Value;
+                }
+            }
+        }
+
+        public bool MoveNext()
+        {
+            if (this.current == null || this.head == null)
+            {
+                throw new InvalidOperationException("Skip list is empty.");
+            }
+
+            if (!this.current.Value.Equals(this.head.Value))
+            {
+                this.current = this.current.Next;
+            }
+
+            return this.current != null;
+        }
+
+        public void Reset()
+        {
+            this.current = this.head;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

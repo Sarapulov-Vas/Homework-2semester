@@ -3,9 +3,11 @@
 namespace SkipList;
 
 public class SkipList<T> : IList<T>
+    where T : IComparable<T>
 {
-    private Level? currentLevel;
     private readonly Random rnd = new ();
+
+    private Level? currentLevel;
 
     private int count;
 
@@ -15,22 +17,41 @@ public class SkipList<T> : IList<T>
 
     public SkipList(List<T> orginList)
     {
-        currentLevel = new Level();
-        var currentArray = orginList.ToArray();
-        Array.Sort(currentArray);
-        foreach (var element in currentArray)
+        foreach (var element in orginList)
         {
-            currentLevel.AddLast(element, null);
-            count++;
-        }
-
-        while (currentLevel.Count > 1)
-        {
-            currentLevel = BuildLevel(currentLevel);
+            Add(element);
         }
     }
 
-    public T this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public T this[int index]
+    {
+        get
+        {
+            if (index >= count)
+            {
+                throw new IndexOutOfRangeException("Index out of range.");
+            }
+
+            var level = currentLevel;
+            while (level.DownLevel != null)
+            {
+                level = level.DownLevel;
+            }
+
+            var node = currentLevel.List;
+            for (int i = 0; i < index; ++i)
+            {
+                node = node.Next;
+            }
+
+            return node.Value;
+        }
+
+        set
+        {
+            throw new NotSupportedException("Non-modifiable elements.");
+        }
+    }
 
     public int Count => count;
 
@@ -51,6 +72,8 @@ public class SkipList<T> : IList<T>
                 currentLevel = BuildLevel(currentLevel);
             }
         }
+
+        count++;
     }
 
     public void Clear()
@@ -80,7 +103,7 @@ public class SkipList<T> : IList<T>
 
     public void Insert(int index, T item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public bool Remove(T item)
@@ -100,24 +123,41 @@ public class SkipList<T> : IList<T>
 
     private ListNode? AddNode(Level currentLevel, ListNode currentNode, T item)
     {
-        while (currentNode.Next != null && currentNode.Next.Value.GetHashCode() < item.GetHashCode())
+        if (currentLevel.List.Value.GetHashCode() > item.GetHashCode())
+        {
+            if (currentLevel.DownLevel != null)
+            {
+                return currentLevel.AddFirst(AddNode(currentLevel.DownLevel, currentNode, item), item);
+            }
+            else
+            {
+                return currentLevel.AddFirst(null, item);
+            }
+        }
+
+        while (currentNode.Next != null && item.CompareTo(currentNode.Next.Value) > 0)
         {
             currentNode = currentNode.Next;
         }
 
+        ListNode? downNode = null;
         if (currentLevel.DownLevel != null)
         {
+            downNode = AddNode(currentLevel.DownLevel, currentNode.Down, item);
+        }
+
+        if (downNode != null || currentLevel.DownLevel == null)
+        {
+            var newNode = currentLevel.AddAfter(currentNode, downNode, item);
             if (rnd.NextDouble() < 0.5)
             {
-                return currentLevel.AddAfter(currentNode, AddNode(currentLevel.DownLevel, currentNode, item), item);
+                return newNode;
             }
 
             return null;
         }
-        else
-        {
-            return currentLevel.AddAfter(currentNode, null, item);
-        }
+
+        return null;
     }
 
     private Level BuildLevel(Level downLevel)
@@ -150,7 +190,7 @@ public class SkipList<T> : IList<T>
 
         public ListNode? Next { get; set; }
 
-        public ListNode? Down { get; set; }
+        public ListNode? Down { get; }
     }
 
     private class Level
@@ -186,6 +226,14 @@ public class SkipList<T> : IList<T>
             }
 
             return node.Next;
+        }
+
+        public ListNode AddFirst(ListNode? down, T value)
+        {
+            var tmp = new ListNode(List, down, value);
+            List = tmp;
+            Count++;
+            return tmp;
         }
 
         public void AddLast(T value, ListNode? down)

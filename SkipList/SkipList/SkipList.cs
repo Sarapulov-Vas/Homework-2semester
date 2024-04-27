@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Security.Principal;
 
 namespace SkipList;
 
@@ -55,7 +56,7 @@ public class SkipList<T> : IList<T>
 
     public int Count => count;
 
-    public bool IsReadOnly => throw new NotImplementedException();
+    public bool IsReadOnly => true;
 
     public void Add(T item)
     {
@@ -78,17 +79,59 @@ public class SkipList<T> : IList<T>
 
     public void Clear()
     {
-        throw new NotImplementedException();
+        count = 0;
+        currentLevel = null;
     }
 
     public bool Contains(T item)
     {
-        throw new NotImplementedException();
+        if (currentLevel == null)
+        {
+            return false;
+        }
+
+        if (FindItem(currentLevel.List, item) != null)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        throw new NotImplementedException();
+        if (array == null)
+        {
+            throw new ArgumentException("Null array");
+        }
+
+        if (this.currentLevel == null || arrayIndex < 0 || arrayIndex >= count)
+        {
+            throw new ArgumentOutOfRangeException("Index out of range.");
+        }
+
+        if (array.Length < count - arrayIndex)
+        {
+            throw new ArgumentException("Insufficient array size.");
+        }
+
+        var currentLevel = this.currentLevel;
+        while (currentLevel.DownLevel != null)
+        {
+            currentLevel = currentLevel.DownLevel;
+        }
+
+        var currentNode = currentLevel.List;
+        for (int i = 0; i < arrayIndex - 1; ++i)
+        {
+            currentNode = currentNode.Next;
+        }
+
+        for (int i = 0; i < count - arrayIndex; i++)
+        {
+            array[i] = currentNode.Value;
+            currentNode = currentNode.Next;
+        }
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -121,9 +164,34 @@ public class SkipList<T> : IList<T>
         throw new NotImplementedException();
     }
 
+    private ListNode? FindItem(ListNode currentNode, T item)
+    {
+        while (currentNode != null && item.CompareTo(currentNode.Value) > 0)
+        {
+            currentNode = currentNode.Next;
+        }
+
+        if (currentNode == null)
+        {
+            return null;
+        }
+
+        if (item.Equals(currentNode.Value))
+        {
+            return currentNode;
+        }
+
+        if (currentNode.Down != null)
+        {
+            return FindItem(currentNode.Down, item);
+        }
+
+        return null;
+    }
+
     private ListNode? AddNode(Level currentLevel, ListNode currentNode, T item)
     {
-        if (currentLevel.List.Value.GetHashCode() > item.GetHashCode())
+        if (item.CompareTo(currentNode.Value) < 0)
         {
             if (currentLevel.DownLevel != null)
             {

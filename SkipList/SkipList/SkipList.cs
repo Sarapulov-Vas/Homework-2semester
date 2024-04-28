@@ -8,11 +8,18 @@ using System.Collections;
 public class SkipList<T> : IList<T>
     where T : IComparable<T>
 {
-    private readonly Random rnd = new ();
+    /// <summary>
+    /// Gets or sets random.
+    /// </summary>
+    private Random rnd = new ();
 
     private Level? currentLevel;
 
     private int count;
+
+    private int currentNumberOfLevels;
+
+    private int MaxNumberOfLevels => (int)Math.Log2(this.count) + 1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SkipList"/> class.
@@ -65,7 +72,7 @@ public class SkipList<T> : IList<T>
                 level = level.DownLevel;
             }
 
-            var node = this.currentLevel.List;
+            var node = level.List;
             for (int i = 0; i < index; ++i)
             {
                 node = node.Next;
@@ -93,7 +100,7 @@ public class SkipList<T> : IList<T>
         else
         {
             this.AddNode(this.currentLevel, this.currentLevel.List, item);
-            while (this.currentLevel.Count > 1)
+            while (this.currentLevel.Count > 1 && this.currentNumberOfLevels < this.MaxNumberOfLevels)
             {
                 this.currentLevel = this.BuildLevel(this.currentLevel);
             }
@@ -123,12 +130,7 @@ public class SkipList<T> : IList<T>
             return false;
         }
 
-        if (this.FindItem(this.currentLevel.List, item) != null)
-        {
-            return true;
-        }
-
-        return false;
+        return this.FindItem(this.currentLevel.List, item) != null;
     }
 
     /// <summary>
@@ -192,17 +194,17 @@ public class SkipList<T> : IList<T>
             return -1;
         }
 
-        var currentLevel = this.currentLevel;
-        while (currentLevel.DownLevel != null)
+        var level = this.currentLevel;
+        while (level.DownLevel != null)
         {
-            currentLevel = currentLevel.DownLevel;
+            level = level.DownLevel;
         }
 
         var index = 0;
-        var currentNode = currentLevel.List;
-        while (currentNode.Next != null)
+        var currentNode = level.List;
+        while (currentNode != null)
         {
-            if (currentNode.Equals(item))
+            if (currentNode.Value.Equals(item))
             {
                 return index;
             }
@@ -237,8 +239,13 @@ public class SkipList<T> : IList<T>
             return false;
         }
 
-        this.count--;
-        return this.RemoveElement(this.currentLevel, item);
+        if (this.RemoveElement(this.currentLevel, item))
+        {
+            this.count--;
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -267,7 +274,7 @@ public class SkipList<T> : IList<T>
         var isDelaet = false;
         while (currentLevel != null)
         {
-            currentLevel.Remove(item);
+            isDelaet = currentLevel.Remove(item);
             currentLevel = currentLevel.DownLevel;
         }
 
@@ -277,14 +284,9 @@ public class SkipList<T> : IList<T>
     private ListNode? FindItem(ListNode currentNode, T item)
     {
         var node = currentNode;
-        while (node != null && item.CompareTo(node.Value) > 0)
+        while (node.Next != null && item.CompareTo(node.Value) > 0)
         {
             node = node.Next;
-        }
-
-        if (node == null)
-        {
-            return null;
         }
 
         if (item.Equals(node.Value))
@@ -343,6 +345,7 @@ public class SkipList<T> : IList<T>
     {
         var currentLevel = new Level(downLevel.List, downLevel);
         var currentNode = downLevel.List.Next;
+        currentNumberOfLevels++;
         while (currentNode != null)
         {
             if (this.rnd.NextDouble() < 0.5)
@@ -488,6 +491,8 @@ public class SkipList<T> : IList<T>
 
         private ListNode? current;
 
+        private int index = -1;
+
         public Enumerator(Level level)
         {
             if (level == null)
@@ -545,11 +550,12 @@ public class SkipList<T> : IList<T>
                 throw new InvalidOperationException("Skip list is empty.");
             }
 
-            if (!this.current.Value.Equals(this.head.Value))
+            if (this.index != -1)
             {
                 this.current = this.current.Next;
             }
 
+            this.index++;
             return this.current != null;
         }
 

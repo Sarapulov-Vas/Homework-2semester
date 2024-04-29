@@ -170,27 +170,15 @@ namespace SkipList.Tests
             Assert.That(list.Remove(100), Is.False);
             Assert.That(list.Remove(10), Is.True);
             int[] intermediateResult = [5, 20, 30];
-            Assert.That(list.Count, Is.EqualTo(intermediateResult.Length));
-            for (int i = 0; i < list.Count; ++i)
-            {
-                Assert.That(list[i], Is.EqualTo(intermediateResult[i]));
-            }
+            CheckingElements(intermediateResult);
 
             Assert.That(list.Remove(30), Is.True);
             intermediateResult = [5, 20];
-            Assert.That(list.Count, Is.EqualTo(intermediateResult.Length));
-            for (int i = 0; i < list.Count; ++i)
-            {
-                Assert.That(list[i], Is.EqualTo(intermediateResult[i]));
-            }
+            CheckingElements(intermediateResult);
 
             Assert.That(list.Remove(5), Is.True);
             intermediateResult = [20];
-            Assert.That(list.Count, Is.EqualTo(intermediateResult.Length));
-            for (int i = 0; i < list.Count; ++i)
-            {
-                Assert.That(list[i], Is.EqualTo(intermediateResult[i]));
-            }
+            CheckingElements(intermediateResult);
         }
 
         [Test]
@@ -203,27 +191,24 @@ namespace SkipList.Tests
 
             list.RemoveAt(1);
             int[] intermediateResult = [5, 20, 30];
-            Assert.That(list.Count, Is.EqualTo(intermediateResult.Length));
-            for (int i = 0; i < list.Count; ++i)
-            {
-                Assert.That(list[i], Is.EqualTo(intermediateResult[i]));
-            }
+            CheckingElements(intermediateResult);
 
             list.RemoveAt(2);
             intermediateResult = [5, 20];
-            Assert.That(list.Count, Is.EqualTo(intermediateResult.Length));
-            for (int i = 0; i < list.Count; ++i)
-            {
-                Assert.That(list[i], Is.EqualTo(intermediateResult[i]));
-            }
+            CheckingElements(intermediateResult);
 
             list.RemoveAt(0);
             intermediateResult = [20];
-            Assert.That(list.Count, Is.EqualTo(intermediateResult.Length));
+            CheckingElements(intermediateResult);
+        }
+
+        private void CheckingElements(int[] expectedResult)
+        {
+            Assert.That(list.Count, Is.EqualTo(expectedResult.Length));
             for (int i = 0; i < list.Count; ++i)
             {
-                Assert.That(list[i], Is.EqualTo(intermediateResult[i]));
+                Assert.That(list[i], Is.EqualTo(expectedResult[i]));
             }
-        }
+        } 
     }
 }

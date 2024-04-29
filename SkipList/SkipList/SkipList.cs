@@ -95,6 +95,7 @@ public class SkipList<T> : IList<T>
     {
         if (this.currentLevel == null)
         {
+            this.currentNumberOfLevels++;
             this.currentLevel = new Level(item);
         }
         else
@@ -284,7 +285,7 @@ public class SkipList<T> : IList<T>
     private ListNode? FindItem(ListNode currentNode, T item)
     {
         var node = currentNode;
-        while (node.Next != null && item.CompareTo(node.Value) > 0)
+        while (node.Next != null && item.CompareTo(node.Next.Value) >= 0)
         {
             node = node.Next;
         }
@@ -345,7 +346,7 @@ public class SkipList<T> : IList<T>
     {
         var currentLevel = new Level(downLevel.List, downLevel);
         var currentNode = downLevel.List.Next;
-        currentNumberOfLevels++;
+        this.currentNumberOfLevels++;
         while (currentNode != null)
         {
             if (this.rnd.NextDouble() < 0.5)

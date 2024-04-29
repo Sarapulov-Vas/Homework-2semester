@@ -103,19 +103,17 @@ namespace SkipList.Tests
         public void TestContains ()
         {
             Assert.That(list.Contains(5), Is.False);
-
             foreach (var i in testData)
             {
                 list.Add(i);
             }
-            
+            Assert.That(list.Contains(100), Is.False);
+
             foreach (var i in expecctedResult)
             {
-                Console.WriteLine(i);
                 Assert.That(list.Contains(i), Is.True);
             }
-
-            Assert.That(list.Contains(100), Is.False);
+    
         }
 
         [Test]

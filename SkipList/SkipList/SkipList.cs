@@ -11,7 +11,7 @@ public class SkipList<T> : IList<T>
     /// <summary>
     /// Gets or sets random.
     /// </summary>
-    private Random rnd = new ();
+    private readonly Random rnd = new ();
 
     private Level? currentLevel;
 
@@ -158,13 +158,13 @@ public class SkipList<T> : IList<T>
             throw new ArgumentException("Insufficient array size.");
         }
 
-        var currentLevel = this.currentLevel;
-        while (currentLevel.DownLevel != null)
+        var level = this.currentLevel;
+        while (level.DownLevel != null)
         {
-            currentLevel = currentLevel.DownLevel;
+            level = level.DownLevel;
         }
 
-        var currentNode = currentLevel.List;
+        var currentNode = level.List;
         for (int i = 0; i < arrayIndex - 1; ++i)
         {
             currentNode = currentNode.Next;
@@ -344,20 +344,20 @@ public class SkipList<T> : IList<T>
 
     private Level BuildLevel(Level downLevel)
     {
-        var currentLevel = new Level(downLevel.List, downLevel);
+        var level = new Level(downLevel.List, downLevel);
         var currentNode = downLevel.List.Next;
         this.currentNumberOfLevels++;
         while (currentNode != null)
         {
             if (this.rnd.NextDouble() < 0.5)
             {
-                currentLevel.AddLast(currentNode.Value, currentNode);
+                level.AddLast(currentNode.Value, currentNode);
             }
 
             currentNode = currentNode.Next;
         }
 
-        return currentLevel;
+        return level;
     }
 
     private class ListNode

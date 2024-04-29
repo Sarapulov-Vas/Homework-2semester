@@ -6,9 +6,9 @@ namespace SkipList.Tests
     {
         private SkipList<int> list;
 
-        private int[] testData = [10, 20, 5, 30];
+        private readonly int[] testData = [10, 20, 5, 30];
 
-        private int[] expecctedResult = [5, 10, 20, 30];
+        private readonly int[] expecctedResult = [5, 10, 20, 30];
 
         [SetUp]
         public void SetUp()

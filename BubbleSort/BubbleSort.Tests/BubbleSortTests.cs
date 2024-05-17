@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace BubbleSort.Tests;
 
 public class Tests

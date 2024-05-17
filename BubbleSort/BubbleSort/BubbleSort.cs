@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that implements bubbleclm sorting.
 /// </summary>
-public class BubbleSort
+public static class BubbleSort
 {
     /// <summary>
     /// A method implementing bubble sorting.

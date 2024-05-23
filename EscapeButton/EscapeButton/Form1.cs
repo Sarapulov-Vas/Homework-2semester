@@ -9,7 +9,7 @@ namespace EscapeButton
     /// </summary>
     public partial class Form1 : Form
     {
-        private Random rnd = new Random();
+        private readonly Random rnd = new Random();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.

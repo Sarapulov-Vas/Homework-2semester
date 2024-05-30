@@ -46,10 +46,7 @@ public class Tests
     {
         public bool IsNull(object? element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException(nameof(element));
-            }
+            ArgumentNullException.ThrowIfNull(element);
             return (int)element == 0;
         }
     }
@@ -58,10 +55,7 @@ public class Tests
     {
         public bool IsNull(object? element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException(nameof(element));
-            }
+            ArgumentNullException.ThrowIfNull(element);
             return (string)element == String.Empty;
         }
     }

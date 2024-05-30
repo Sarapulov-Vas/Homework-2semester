@@ -18,10 +18,8 @@ namespace NullElements
         /// <returns>Number of null elements.</returns>
         public static int Count<T>(List<T> list, IIsNull isNull)
         {
-            if (list is null || isNull is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(isNull);
 
             int counter = 0;
             foreach (var item in list)

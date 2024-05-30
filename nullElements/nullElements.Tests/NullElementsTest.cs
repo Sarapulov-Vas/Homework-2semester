@@ -7,7 +7,6 @@ using NullElements;
 
 public class Tests
 {
-
     [Test]
     public void TestIntList()
     {

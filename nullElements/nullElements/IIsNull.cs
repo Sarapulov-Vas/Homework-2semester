@@ -5,7 +5,7 @@
 namespace NullElements
 {
     /// <summary>
-    /// Null Сheck шnterface.
+    /// Null Сheck interface.
     /// </summary>
     public interface IIsNull
     {

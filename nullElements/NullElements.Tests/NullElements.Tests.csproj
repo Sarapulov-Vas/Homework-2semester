@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\nullElements\nullElements.csproj" />
+    <ProjectReference Include="..\NullElements\NullElements.csproj" />
   </ItemGroup>
 
 </Project>

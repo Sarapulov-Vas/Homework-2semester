@@ -2,9 +2,7 @@
 // Copyright (c) Sarapuliv Vasiliy. All rights reserved.
 // </copyright>
 
-namespace nullElements.Tests;
-using NullElements;
-
+namespace NullElements.Tests;
 public class Tests
 {
     /// <summary>

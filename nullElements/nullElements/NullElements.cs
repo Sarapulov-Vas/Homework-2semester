@@ -1,4 +1,4 @@
-﻿// <copyright file="Form1.cs" company="Sarapulov Vasiliy">
+﻿// <copyright file="NullElements.cs" company="Sarapulov Vasiliy">
 // Copyright (c) Sarapuliv Vasiliy. All rights reserved.
 // </copyright>
 

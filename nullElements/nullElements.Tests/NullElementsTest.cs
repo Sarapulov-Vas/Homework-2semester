@@ -24,6 +24,25 @@ public class Tests
         Assert.That(NullElements.Count(testList, isNull), Is.EqualTo(3));
     }
 
+    [Test]
+    public void TestNullElement()
+    {
+        var isNull = new NullInt();
+        List<int?> testList = [1, 2, 3, 4, 0, null];
+        Assert.Throws<ArgumentNullException>(() => NullElements.Count(testList, isNull));
+    }
+
+    [Test]
+    public void TestNullListAndNullChecker()
+    {
+        NullInt? nullIsNull = null;
+        List<int?>? nullTestList = null;
+        var isNull = new NullInt();
+        List<int?> testList = [1, 2, 3, 4, 0, 10];
+        Assert.Throws<ArgumentNullException>(() => NullElements.Count(testList, nullIsNull));
+        Assert.Throws<ArgumentNullException>(() => NullElements.Count(nullTestList, isNull));
+    }
+
     public class NullInt : IIsNull
     {
         public bool IsNull(object? element)

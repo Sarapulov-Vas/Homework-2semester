@@ -7,6 +7,9 @@ using NullElements;
 
 public class Tests
 {
+    /// <summary>
+    /// Test of counting zeros in int.
+    /// </summary>
     [Test]
     public void TestIntList()
     {
@@ -15,6 +18,9 @@ public class Tests
         Assert.That(NullElements.Count(testList, isNull), Is.EqualTo(2));
     }
 
+    /// <summary>
+    /// Test of counting zeros in strings.
+    /// </summary>
     [Test]
     public void TestStringList()
     {
@@ -23,6 +29,9 @@ public class Tests
         Assert.That(NullElements.Count(testList, isNull), Is.EqualTo(3));
     }
 
+    /// <summary>
+    /// Test Null elements in list.
+    /// </summary>
     [Test]
     public void TestNullElement()
     {
@@ -31,6 +40,9 @@ public class Tests
         Assert.Throws<ArgumentNullException>(() => NullElements.Count(testList, isNull));
     }
 
+    /// <summary>
+    /// Test null list.
+    /// </summary>
     [Test]
     public void TestNullListAndNullChecker()
     {
@@ -38,10 +50,13 @@ public class Tests
         List<int?>? nullTestList = null;
         var isNull = new NullInt();
         List<int?> testList = [1, 2, 3, 4, 0, 10];
-        Assert.Throws<ArgumentNullException>(() => NullElements.Count(testList, nullIsNull));
-        Assert.Throws<ArgumentNullException>(() => NullElements.Count(nullTestList, isNull));
+        Assert.Throws<ArgumentNullException>(() => NullElements.Count(testList, nullIsNull!));
+        Assert.Throws<ArgumentNullException>(() => NullElements.Count(nullTestList!, isNull));
     }
 
+    /// <summary>
+    /// Class checking int for null.
+    /// </summary>
     public class NullInt : IIsNull
     {
         public bool IsNull(object? element)
@@ -51,6 +66,9 @@ public class Tests
         }
     }
 
+    /// <summary>
+    /// Class checking strings for null.
+    /// </summary>
     public class NullString : IIsNull
     {
         public bool IsNull(object? element)

@@ -25,28 +25,28 @@ namespace Calculator.Tests
                     }
                 }
 
-                Assert.That(Math.Abs(expectedResult[i] - num) < epsilon);
+                Assert.That(Math.Abs(expectedResult[i] - num) < this.epsilon);
                 if (expression[i + 1] != '='.ToString())
                 {
                     switch (expression[i + 1][0])
                     {
                         case '+':
-                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Addition)) < epsilon);
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Addition)) < this.epsilon);
                             break;
                         case '-':
-                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Subtraction)) < epsilon);
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Subtraction)) < this.epsilon);
                             break;
                         case '*':
-                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Multiplication)) < epsilon);
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Multiplication)) < this.epsilon);
                             break;
                         case '/':
-                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Division)) < epsilon);
+                            Assert.That(Math.Abs(expectedResult[i + 1] - calculator.UseOperation(Operations.Division)) < this.epsilon);
                             break;
                     }
                 }
                 else
                 {
-                    Assert.That(Math.Abs(expectedResult[i + 1] - calculator.GetResult()) < epsilon);
+                    Assert.That(Math.Abs(expectedResult[i + 1] - calculator.GetResult()) < this.epsilon);
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace Calculator.Tests
             var calculator = new Calculator();
             calculator.AddDigit(1);
             calculator.DelateCurrentNumber();
-            Assert.That(Math.Abs(double.Parse(calculator.AddDigit(2)) - 2) < epsilon);
+            Assert.That(Math.Abs(double.Parse(calculator.AddDigit(2)) - 2) < this.epsilon);
         }
 
         [Test]
@@ -77,16 +77,16 @@ namespace Calculator.Tests
             calculator.AddDigit(1);
             calculator.UseOperation(Operations.Addition);
             calculator.AddDigit(2);
-            Assert.That(Math.Abs(calculator.GetResult() - 3) < epsilon);
+            Assert.That(Math.Abs(calculator.GetResult() - 3) < this.epsilon);
             calculator.UseOperation(Operations.Multiplication);
             calculator.AddDigit(3);
-            Assert.That(Math.Abs(calculator.GetResult() - 9) < epsilon);
+            Assert.That(Math.Abs(calculator.GetResult() - 9) < this.epsilon);
             calculator.UseOperation(Operations.Subtraction);
             calculator.AddDigit(3);
-            Assert.That(Math.Abs(calculator.GetResult() - 6) < epsilon);
+            Assert.That(Math.Abs(calculator.GetResult() - 6) < this.epsilon);
             calculator.UseOperation(Operations.Division);
             calculator.AddDigit(3);
-            Assert.That(Math.Abs(calculator.GetResult() - 2) < epsilon);
+            Assert.That(Math.Abs(calculator.GetResult() - 2) < this.epsilon);
         }
 
         [TestCase("123", 12)]
@@ -107,7 +107,7 @@ namespace Calculator.Tests
                 }
             }
 
-            Assert.That(Math.Abs(double.Parse(calculator.BackSpace()) - expectedResult) < epsilon);
+            Assert.That(Math.Abs(double.Parse(calculator.BackSpace()) - expectedResult) < this.epsilon);
         }
 
         public static class TestData

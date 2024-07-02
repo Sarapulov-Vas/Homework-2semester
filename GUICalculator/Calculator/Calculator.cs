@@ -1,18 +1,18 @@
-﻿using System.Text;
-
-namespace Calculator
+﻿namespace Calculator
 {
+    using System.Text;
+
     /// <summary>
     /// A class that implements a calculator.
     /// </summary>
     public class Calculator
     {
+        private readonly double epsilon = 1e-10;
         private double firstNumber;
         private double secondNumber;
-        private StringBuilder currentNumber = new();
+        private StringBuilder currentNumber = new ();
         private Operations operation;
         private bool inputFirstNumber;
-        private readonly double epsilon = 1e-10;
         private bool usePoint;
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace Calculator
         /// </summary>
         public Calculator()
         {
-            currentNumber.Append(0);
+            this.currentNumber.Append(0);
         }
 
         /// <summary>
@@ -56,24 +56,24 @@ namespace Calculator
         /// <returns>Current number.</returns>
         public string AddDigit(int digit)
         {
-            if (currentNumber.Length <= 16)
+            if (this.currentNumber.Length <= 16)
             {
-                if (currentNumber.ToString() == "0")
+                if (this.currentNumber.ToString() == "0")
                 {
                     if (digit != 0)
                     {
-                        currentNumber.Clear();
+                        this.currentNumber.Clear();
                     }
                     else
                     {
-                        return currentNumber.ToString();
+                        return this.currentNumber.ToString();
                     }
                 }
 
-                currentNumber.Append(digit);
+                this.currentNumber.Append(digit);
             }
 
-            return currentNumber.ToString();
+            return this.currentNumber.ToString();
         }
 
         /// <summary>
@@ -82,13 +82,13 @@ namespace Calculator
         /// <returns>Current number.</returns>
         public string AddPoint()
         {
-            if (usePoint == false)
+            if (this.usePoint == false)
             {
-                currentNumber.Append(',');
-                usePoint = true;
+                this.currentNumber.Append(',');
+                this.usePoint = true;
             }
 
-            return currentNumber.ToString();
+            return this.currentNumber.ToString();
         }
 
         /// <summary>
@@ -97,17 +97,17 @@ namespace Calculator
         /// <returns>Current number.</returns>
         public string BackSpace()
         {
-            if (currentNumber.Length > 0)
+            if (this.currentNumber.Length > 0)
             {
-                currentNumber.Remove(currentNumber.Length - 1, 1);
+                this.currentNumber.Remove(this.currentNumber.Length - 1, 1);
             }
 
-            if (currentNumber.Length == 0)
+            if (this.currentNumber.Length == 0)
             {
-                currentNumber.Append(0);
+                this.currentNumber.Append(0);
             }
 
-            return currentNumber.ToString();
+            return this.currentNumber.ToString();
         }
 
         /// <summary>
@@ -116,9 +116,9 @@ namespace Calculator
         /// <returns>A string without a deleted number.</returns>
         public string DelateCurrentNumber()
         {
-            currentNumber.Clear();
-            currentNumber.Append(0);
-            return currentNumber.ToString();
+            this.currentNumber.Clear();
+            this.currentNumber.Append(0);
+            return this.currentNumber.ToString();
         }
 
         /// <summary>
@@ -126,11 +126,11 @@ namespace Calculator
         /// </summary>
         public void ClearAll()
         {
-            firstNumber = 0;
-            secondNumber = 0;
-            inputFirstNumber = false;
-            currentNumber.Clear();
-            currentNumber.Append(0);
+            this.firstNumber = 0;
+            this.secondNumber = 0;
+            this.inputFirstNumber = false;
+            this.currentNumber.Clear();
+            this.currentNumber.Append(0);
         }
 
         /// <summary>
@@ -140,24 +140,24 @@ namespace Calculator
         /// <returns>Calculation result.</returns>
         public double UseOperation(Operations operation)
         {
-            if (inputFirstNumber == false)
+            if (this.inputFirstNumber == false)
             {
                 this.operation = operation;
-                inputFirstNumber = true;
-                firstNumber = double.Parse(currentNumber.ToString());
-                currentNumber.Clear();
+                this.inputFirstNumber = true;
+                this.firstNumber = double.Parse(this.currentNumber.ToString());
+                this.currentNumber.Clear();
             }
             else
             {
-                secondNumber = double.Parse(currentNumber.ToString());
-                currentNumber.Clear();
-                firstNumber = Calculate(this.operation);
+                this.secondNumber = double.Parse(this.currentNumber.ToString());
+                this.currentNumber.Clear();
+                this.firstNumber = this.Calculate(this.operation);
                 this.operation = operation;
             }
 
-            currentNumber.Append(0);
-            usePoint = false;
-            return firstNumber;
+            this.currentNumber.Append(0);
+            this.usePoint = false;
+            return this.firstNumber;
         }
 
         /// <summary>
@@ -166,12 +166,12 @@ namespace Calculator
         /// <returns>Calculated result.</returns>
         public double GetResult()
         {
-            secondNumber = double.Parse(currentNumber.ToString());
-            firstNumber = Calculate(operation);
-            currentNumber = new (firstNumber.ToString());
-            inputFirstNumber = false;
-            usePoint = false;
-            return firstNumber;
+            this.secondNumber = double.Parse(this.currentNumber.ToString());
+            this.firstNumber = this.Calculate(this.operation);
+            this.currentNumber = new (this.firstNumber.ToString());
+            this.inputFirstNumber = false;
+            this.usePoint = false;
+            return this.firstNumber;
         }
 
         private double Calculate(Operations opeartion)
@@ -179,18 +179,18 @@ namespace Calculator
             switch (opeartion)
             {
                 case Operations.Addition:
-                    return firstNumber + secondNumber;
+                    return this.firstNumber + this.secondNumber;
                 case Operations.Subtraction:
-                    return firstNumber - secondNumber;
+                    return this.firstNumber - this.secondNumber;
                 case Operations.Multiplication:
-                    return firstNumber * secondNumber;
+                    return this.firstNumber * this.secondNumber;
                 case Operations.Division:
-                    if (Math.Abs(secondNumber) < epsilon)
+                    if (Math.Abs(this.secondNumber) < this.epsilon)
                     {
                         throw new DivideByZeroException();
                     }
 
-                    return firstNumber / secondNumber;
+                    return this.firstNumber / this.secondNumber;
                 default:
                     throw new ArgumentException("Unsupported operation.");
             }
